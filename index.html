@@ -1404,6 +1404,20 @@
             return name.replace(/[^a-zA-Z0-9 \-]/g, '');
         }
 
+        // DOM-based notification (alert() is blocked in sandboxed iframes)
+        function showNotification(message, type) {
+            const existing = document.getElementById('app-notification');
+            if (existing) existing.remove();
+            const colors = { error: '#DC2626', success: '#10B981', info: '#3B82F6' };
+            const bg = colors[type] || colors.info;
+            const div = document.createElement('div');
+            div.id = 'app-notification';
+            div.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;padding:14px 28px;border-radius:12px;color:white;font-size:15px;font-weight:600;font-family:system-ui,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,0.2);animation:fadeIn 0.3s;max-width:90vw;text-align:center;background:' + bg;
+            div.textContent = message;
+            document.body.appendChild(div);
+            setTimeout(() => { if (div.parentNode) div.remove(); }, 4000);
+        }
+
         const formData = {};
         let currentSection = 1;
         const totalSections = 6;
@@ -1646,7 +1660,7 @@
 
         async function generateBrand() {
             if (!validateSection(6)) {
-                alert('Molimo popunite sva obavezna polja.');
+                showNotification('Molimo popunite sva obavezna polja.', 'error');
                 return;
             }
 
@@ -1929,12 +1943,21 @@ KRITIČNA PRAVILA:
             container.style.cssText = 'max-width:100%; border-radius:0; box-shadow:none; margin:0; background:transparent; padding:0; overflow:visible;';
             document.querySelector('.progress-bar').style.display = 'none';
 
-            // Load fonts
+            // Load fonts with error handling
             const link = document.createElement('link');
             const headlineEncoded = encodeURIComponent(safeHeadline);
             const bodyEncoded = encodeURIComponent(safeBody);
             link.href = `https://fonts.googleapis.com/css2?family=${headlineEncoded}:wght@400;600;700;900&family=${bodyEncoded}:wght@400;500;600;700&display=swap`;
             link.rel = 'stylesheet';
+            link.onerror = () => {
+                // Google Fonts blocked — inject system font fallbacks
+                const fallback = document.createElement('style');
+                fallback.textContent = `
+                    @font-face { font-family: '${safeHeadline}'; src: local('Georgia'), local('Times New Roman'); font-weight: 400 900; }
+                    @font-face { font-family: '${safeBody}'; src: local('Helvetica Neue'), local('Arial'); font-weight: 400 700; }
+                `;
+                document.head.appendChild(fallback);
+            };
             document.head.appendChild(link);
 
             // Build guidelines
@@ -2103,7 +2126,7 @@ KRITIČNA PRAVILA:
 
         function generateAndPrintPDF() {
             if (!window.brandSystem || !window.brandFormData) {
-                alert('Greška: Podaci o brendu nisu dostupni. Molimo pokrenite generisanje ponovo.');
+                showNotification('Podaci o brendu nisu dostupni. Pokrenite generisanje ponovo.', 'error');
                 return;
             }
 
@@ -2287,20 +2310,43 @@ document.fonts.ready.then(function() { window.print(); });
 </body>
 </html>`;
 
-            // Download as HTML file via Blob
-            const blob = new Blob([standaloneHTML], { type: 'text/html;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = formData.brandName.replace(/[^a-zA-Z0-9а-яА-ЯčćžšđČĆŽŠĐ ]/g, '').replace(/\s+/g, '-') + '-brandbook.html';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            // Try Blob download, fall back to clipboard if sandbox blocks it
+            const fileName = formData.brandName.replace(/[^a-zA-Z0-9а-яА-ЯčćžšđČĆŽŠĐ ]/g, '').replace(/\s+/g, '-') + '-brandbook.html';
+            try {
+                const blob = new Blob([standaloneHTML], { type: 'text/html;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                showNotification('Brandbook preuzet kao ' + fileName, 'success');
+            } catch (dlErr) {
+                // Blob download blocked by sandbox — copy HTML to clipboard
+                try {
+                    navigator.clipboard.writeText(standaloneHTML).then(() => {
+                        showNotification('Download blokiran — HTML kopiran u clipboard. Nalepite u .html fajl.', 'info');
+                    }).catch(() => {
+                        // Clipboard also blocked — open in new tab as last resort
+                        const w = window.open('', '_blank');
+                        if (w) {
+                            w.document.write(standaloneHTML);
+                            w.document.close();
+                            showNotification('Otvoren u novom tabu — koristite Ctrl+S da sačuvate.', 'info');
+                        } else {
+                            showNotification('Download i clipboard blokirani. Kopirajte stranicu ručno.', 'error');
+                        }
+                    });
+                } catch (e) {
+                    showNotification('Nije moguće preuzeti fajl u ovom okruženju.', 'error');
+                }
+            }
 
             } catch (err) {
                 console.error('PDF greška:', err);
-                alert('Greška pri generisanju PDF-a: ' + err.message);
+                showNotification('Greška pri generisanju: ' + err.message, 'error');
             }
         }
 
