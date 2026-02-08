@@ -650,33 +650,6 @@
             display: block;
         }
 
-        /* PDF PRINT STYLES */
-        #pdfContent {
-            display: none;
-        }
-
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            #pdfContent, #pdfContent * {
-                visibility: visible;
-            }
-            #pdfContent {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                display: block !important;
-            }
-            .pdf-hero {
-                page-break-after: always;
-            }
-            .pdf-section {
-                page-break-inside: avoid;
-            }
-        }
-
         .pdf-hero {
             min-height: 100vh;
             display: flex;
@@ -1929,62 +1902,203 @@ KRITIČNA PRAVILA:
             window.brandSystem = system;
             window.brandFormData = formData;
 
-            const safeBrandName = sanitizeHTML(formData.brandName);
+            // Sanitize all values
+            const safeName = sanitizeHTML(formData.brandName);
+            const safeUniqueness = sanitizeHTML(system.uniquenessStatement || formData.superpower);
+            const safeReasoning = sanitizeHTML(colors.reasoning);
+            const safeHeadline = sanitizeFontName(system.typography.headline);
+            const safeBody = sanitizeFontName(system.typography.body);
+            const safeLogoPrompt = sanitizeHTML(system.logoConceptPrompt);
 
-            // Show success message with prominent PDF button
+            const hexPattern = /^#[0-9A-Fa-f]{3,8}$/;
+            const safeColor = (c) => hexPattern.test(c) ? c : '#000000';
+            const sc = {
+                identity: safeColor(colors.identity),
+                support: safeColor(colors.support),
+                action: safeColor(colors.action),
+                light: safeColor(colors.light),
+                dark: safeColor(colors.dark)
+            };
+
+            const borderRadius = /^[\d.]+(px|rem|em|%)$/.test(system.uiSpecs.borderRadius.split(' ')[0])
+                ? system.uiSpecs.borderRadius.split(' ')[0]
+                : '12px';
+
+            // Break container out of its constrained layout for immersive view
+            const container = document.querySelector('.container');
+            container.style.cssText = 'max-width:100%; border-radius:0; box-shadow:none; margin:0; background:transparent; padding:0; overflow:visible;';
+            document.querySelector('.progress-bar').style.display = 'none';
+
+            // Load fonts
+            const link = document.createElement('link');
+            const headlineEncoded = encodeURIComponent(safeHeadline);
+            const bodyEncoded = encodeURIComponent(safeBody);
+            link.href = `https://fonts.googleapis.com/css2?family=${headlineEncoded}:wght@400;600;700;900&family=${bodyEncoded}:wght@400;500;600;700&display=swap`;
+            link.rel = 'stylesheet';
+            document.head.appendChild(link);
+
+            // Build guidelines
+            const guidelinesHTML = [
+                ...(system.guidelines.dos || []).map(text => `
+                    <div class="pdf-guideline" style="background: #ECFDF5; border-color: #10B981; border-radius: ${borderRadius};">
+                        <span class="pdf-guideline-icon">&#x2705;</span>
+                        <span class="pdf-guideline-text" style="font-family: '${safeBody}', sans-serif; color: #065F46;">
+                            <strong>UVEK:</strong> ${sanitizeHTML(text)}
+                        </span>
+                    </div>`),
+                ...(system.guidelines.donts || []).map(text => `
+                    <div class="pdf-guideline" style="background: #FEF2F2; border-color: #EF4444; border-radius: ${borderRadius};">
+                        <span class="pdf-guideline-icon">&#x274C;</span>
+                        <span class="pdf-guideline-text" style="font-family: '${safeBody}', sans-serif; color: #991B1B;">
+                            <strong>NIKAD:</strong> ${sanitizeHTML(text)}
+                        </span>
+                    </div>`)
+            ].join('');
+
+            // Render full immersive brandbook
             const html = `
-                <div class="loading-state">
-                    <div style="font-size: 80px; margin-bottom: 20px;">&#x2705;</div>
-                    <div class="loading-text">Vizuelni identitet uspešno generisan!</div>
-                    <div class="loading-sub" style="margin: 30px auto; max-width: 500px;">
-                        Vaš kompletan Wheeler sistem vizuelnog identiteta je spreman.<br>
-                        <strong>${safeBrandName}</strong> sada ima profesionalni vizuelni identitet.
+                <!-- HERO -->
+                <div class="pdf-hero" style="background: ${sc.identity}; color: ${sc.light};">
+                    <div class="pdf-brand-name" style="font-family: '${safeHeadline}', sans-serif;">
+                        ${safeName}
                     </div>
-                    <button onclick="generateAndPrintPDF()" style="
-                        padding: 30px 60px;
-                        font-size: 24px;
-                        font-weight: 700;
-                        background: linear-gradient(135deg, #DC2626, #B91C1C);
-                        color: white;
-                        border: none;
-                        border-radius: 16px;
-                        cursor: pointer;
-                        margin-top: 40px;
-                        box-shadow: 0 20px 60px rgba(220, 38, 38, 0.4);
-                        transition: all 0.3s;
-                    " onmouseover="this.style.transform='translateY(-4px) scale(1.02)'" onmouseout="this.style.transform='translateY(0) scale(1)'">
-                        &#x1F4C4; PREUZMI FINALNI BRANDBOOK (PDF)
-                    </button>
-                    <p style="color: #999; margin-top: 25px; font-size: 14px; font-style: italic;">
-                        Klikni dugme za PDF download &rarr; Odaberi "Save as PDF" &rarr; Sačuvaj
+                    <div class="pdf-onliness" style="font-family: '${safeBody}', sans-serif;">
+                        ${safeUniqueness}
+                    </div>
+                </div>
+
+                <!-- COLOR SYSTEM -->
+                <div class="pdf-section" style="background: ${sc.light};">
+                    <h2 class="pdf-heading" style="color: ${sc.identity}; font-family: '${safeHeadline}', sans-serif;">
+                        Sistem boja
+                    </h2>
+                    <div class="pdf-color-blocks">
+                        <div class="pdf-color-block" style="background: ${sc.identity}; color: ${sc.light}; border-radius: ${borderRadius};">
+                            <div class="pdf-color-label">PRIMARNA</div>
+                            <div class="pdf-color-hex">${sanitizeHTML(sc.identity)}</div>
+                        </div>
+                        <div class="pdf-color-block" style="background: ${sc.support}; color: ${sc.light}; border-radius: ${borderRadius};">
+                            <div class="pdf-color-label">SEKUNDARNA</div>
+                            <div class="pdf-color-hex">${sanitizeHTML(sc.support)}</div>
+                        </div>
+                        <div class="pdf-color-block" style="background: ${sc.action}; color: ${sc.dark}; border-radius: ${borderRadius};">
+                            <div class="pdf-color-label">AKCIJA</div>
+                            <div class="pdf-color-hex">${sanitizeHTML(sc.action)}</div>
+                        </div>
+                        <div class="pdf-color-block" style="background: ${sc.light}; color: ${sc.dark}; border: 3px solid ${sc.dark}; border-radius: ${borderRadius};">
+                            <div class="pdf-color-label">SVETLA</div>
+                            <div class="pdf-color-hex">${sanitizeHTML(sc.light)}</div>
+                        </div>
+                        <div class="pdf-color-block" style="background: ${sc.dark}; color: ${sc.light}; border-radius: ${borderRadius};">
+                            <div class="pdf-color-label">TAMNA</div>
+                            <div class="pdf-color-hex">${sanitizeHTML(sc.dark)}</div>
+                        </div>
+                    </div>
+                    <p style="font-family: '${safeBody}', sans-serif; font-size: 18px; line-height: 1.8; color: ${sc.dark}; opacity: 0.8; max-width: 800px; margin: 0 auto; text-align: center;">
+                        ${safeReasoning}
                     </p>
+                </div>
+
+                <!-- TYPOGRAPHY -->
+                <div class="pdf-section" style="background: ${sc.support}20;">
+                    <h2 class="pdf-heading" style="color: ${sc.identity}; font-family: '${safeHeadline}', sans-serif;">
+                        Tipografski sistem
+                    </h2>
+                    <div class="pdf-typo-showcase">
+                        <div class="pdf-typo-sample" style="text-align: center;">
+                            <div class="pdf-typo-label" style="color: ${sc.dark}; font-family: '${safeBody}', sans-serif;">FONT NASLOVA</div>
+                            <div class="pdf-typo-display" style="color: ${sc.identity}; font-family: '${safeHeadline}', sans-serif;">
+                                Aa Bb Cc Dd Ee
+                            </div>
+                            <div class="pdf-typo-name" style="color: ${sc.dark}; font-family: '${safeBody}', sans-serif;">
+                                ${safeHeadline}
+                            </div>
+                        </div>
+                        <div class="pdf-typo-sample" style="text-align: center;">
+                            <div class="pdf-typo-label" style="color: ${sc.dark}; font-family: '${safeBody}', sans-serif;">FONT TEKSTA</div>
+                            <div class="pdf-typo-display" style="color: ${sc.dark}; font-family: '${safeBody}', sans-serif;">
+                                Aa Bb Cc Dd Ee
+                            </div>
+                            <div class="pdf-typo-name" style="color: ${sc.dark}; font-family: '${safeBody}', sans-serif;">
+                                ${safeBody}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UI COMPONENTS -->
+                <div class="pdf-section" style="background: ${sc.light};">
+                    <h2 class="pdf-heading" style="color: ${sc.identity}; font-family: '${safeHeadline}', sans-serif;">
+                        Komponente interfejsa
+                    </h2>
+                    <div class="pdf-ui-grid">
+                        <div class="pdf-ui-card" style="background: white; border-radius: ${borderRadius};">
+                            <div class="pdf-ui-title" style="color: ${sc.identity}; font-family: '${safeBody}', sans-serif;">DUGMAD</div>
+                            <button class="pdf-button" style="background: ${sc.action}; color: ${sc.dark}; border-radius: ${borderRadius}; font-family: '${safeBody}', sans-serif;">
+                                Primarno dugme
+                            </button>
+                            <button class="pdf-button" style="background: transparent; color: ${sc.identity}; border: 2px solid ${sc.identity}; border-radius: ${borderRadius}; font-family: '${safeBody}', sans-serif;">
+                                Sekundarno
+                            </button>
+                        </div>
+                        <div class="pdf-ui-card" style="background: white; border-radius: ${borderRadius};">
+                            <div class="pdf-ui-title" style="color: ${sc.identity}; font-family: '${safeBody}', sans-serif;">POLJA ZA UNOS</div>
+                            <input class="pdf-input" placeholder="Email adresa..." style="border-color: ${sc.support}; border-radius: ${borderRadius}; font-family: '${safeBody}', sans-serif; color: ${sc.dark};" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GUIDELINES -->
+                <div class="pdf-section" style="background: ${sc.support}20;">
+                    <h2 class="pdf-heading" style="color: ${sc.identity}; font-family: '${safeHeadline}', sans-serif;">
+                        Vodič kroz identitet
+                    </h2>
+                    <div class="pdf-guidelines-grid">${guidelinesHTML}</div>
+                </div>
+
+                <!-- LOGO CONCEPT -->
+                <div class="pdf-logo-section">
+                    <h2 class="pdf-heading" style="color: ${sc.identity}; font-family: '${safeHeadline}', sans-serif;">
+                        Koncept logotipa
+                    </h2>
+                    <p style="font-family: '${safeBody}', sans-serif; font-size: 18px; color: ${sc.dark}; margin-bottom: 20px;">
+                        Koristite ovaj prompt u Midjourney-u za generisanje logo koncepata:
+                    </p>
+                    <div class="pdf-logo-prompt">${safeLogoPrompt}</div>
+                </div>
+
+                <!-- ACTION BAR -->
+                <div style="
+                    position: sticky; bottom: 0; left: 0; right: 0; z-index: 100;
+                    background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);
+                    border-top: 1px solid rgba(0,0,0,0.1);
+                    padding: 16px 30px;
+                    display: flex; justify-content: center; align-items: center; gap: 16px;
+                    box-shadow: 0 -4px 30px rgba(0,0,0,0.1);
+                ">
+                    <button onclick="generateAndPrintPDF()" style="
+                        padding: 14px 36px; font-size: 16px; font-weight: 700;
+                        background: ${sc.identity}; color: ${sc.light};
+                        border: none; border-radius: ${borderRadius}; cursor: pointer;
+                        font-family: '${safeBody}', sans-serif;
+                        transition: all 0.2s;
+                    " onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                        &#x1F4E5; Preuzmi Brandbook
+                    </button>
                     <button onclick="location.reload()" style="
-                        margin-top: 50px;
-                        padding: 15px 40px;
-                        background: #f0f0f0;
-                        color: #333;
-                        border: none;
-                        border-radius: 10px;
-                        font-size: 16px;
-                        font-weight: 600;
-                        cursor: pointer;
-                    ">
-                        &#x1F504; Kreiraj Novi Brend
+                        padding: 14px 36px; font-size: 16px; font-weight: 600;
+                        background: transparent; color: ${sc.dark};
+                        border: 2px solid ${sc.dark}30; border-radius: ${borderRadius}; cursor: pointer;
+                        font-family: '${safeBody}', sans-serif;
+                        transition: all 0.2s;
+                    " onmouseover="this.style.borderColor='${sc.dark}'" onmouseout="this.style.borderColor='${sc.dark}30'">
+                        &#x1F504; Novi Brend
                     </button>
                 </div>
             `;
 
             document.getElementById('brandContent').innerHTML = html;
-
-            // Load fonts for PDF
-            const link = document.createElement('link');
-            const headlineFont = encodeURIComponent(sanitizeFontName(system.typography.headline));
-            const bodyFont = encodeURIComponent(sanitizeFontName(system.typography.body));
-            link.href = `https://fonts.googleapis.com/css2?family=${headlineFont}:wght@400;600;700;900&family=${bodyFont}:wght@400;500;600;700&display=swap`;
-            link.rel = 'stylesheet';
-            document.head.appendChild(link);
-
-            window.scrollTo(0, 0);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function generateAndPrintPDF() {
