@@ -861,6 +861,173 @@
             margin: 40px auto 0;
             white-space: pre-wrap;
         }
+
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                border-radius: 12px;
+            }
+
+            .section {
+                padding: 24px 18px;
+            }
+
+            .section-title {
+                font-size: 22px;
+            }
+
+            .section-subtitle {
+                font-size: 14px;
+                margin-bottom: 20px;
+            }
+
+            .question-label {
+                font-size: 16px;
+            }
+
+            .cards-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 10px;
+            }
+
+            .card {
+                padding: 14px 10px;
+            }
+
+            .card-icon {
+                font-size: 28px;
+                margin-bottom: 8px;
+            }
+
+            .card-title {
+                font-size: 13px;
+            }
+
+            .card-desc {
+                font-size: 11px;
+            }
+
+            .buttons {
+                flex-direction: column;
+                margin-top: 24px;
+            }
+
+            button {
+                padding: 14px 20px;
+                font-size: 15px;
+            }
+
+            .loading-state {
+                padding: 60px 20px;
+            }
+
+            .loading-text {
+                font-size: 20px;
+            }
+
+            .loading-sub {
+                font-size: 14px;
+            }
+
+            .brand-hero {
+                padding: 40px 20px;
+            }
+
+            .color-section,
+            .typography-section,
+            .ui-components-section,
+            .guidelines-section,
+            .prompt-section {
+                padding: 30px 18px;
+            }
+
+            .section-heading {
+                font-size: 24px;
+            }
+
+            .typo-grid,
+            .ui-showcase {
+                grid-template-columns: 1fr;
+            }
+
+            .pdf-hero {
+                padding: 60px 20px;
+            }
+
+            .pdf-brand-name {
+                font-size: 40px;
+            }
+
+            .pdf-onliness {
+                font-size: 20px;
+            }
+
+            .pdf-section {
+                padding: 40px 20px;
+            }
+
+            .pdf-heading {
+                font-size: 28px;
+                margin-bottom: 30px;
+            }
+
+            .pdf-color-blocks {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .pdf-color-block {
+                padding: 15px;
+            }
+
+            .pdf-typo-display {
+                font-size: 36px;
+            }
+
+            .pdf-ui-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .pdf-ui-card {
+                padding: 20px;
+            }
+
+            .pdf-logo-section {
+                padding: 40px 20px;
+            }
+
+            .pdf-logo-prompt {
+                padding: 20px;
+                font-size: 12px;
+            }
+
+            .slider-label {
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cards-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .pdf-color-blocks {
+                grid-template-columns: 1fr;
+            }
+
+            .pdf-brand-name {
+                font-size: 32px;
+            }
+
+            .pdf-heading {
+                font-size: 24px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1255,6 +1422,12 @@
     </div>
 
     <script>
+        function sanitizeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
         const formData = {};
         let currentSection = 1;
         const totalSections = 6;
@@ -1696,11 +1869,28 @@ KRITIČNA PRAVILA:
 
             const firstBrace = cleanText.indexOf('{');
             const lastBrace = cleanText.lastIndexOf('}');
-            if (firstBrace !== -1 && lastBrace !== -1) {
-                cleanText = cleanText.substring(firstBrace, lastBrace + 1);
+            if (firstBrace === -1 || lastBrace === -1) {
+                throw new Error('AI nije vratio validan JSON odgovor. Pokušajte ponovo.');
             }
+            cleanText = cleanText.substring(firstBrace, lastBrace + 1);
 
-            return JSON.parse(cleanText);
+            try {
+                const parsed = JSON.parse(cleanText);
+                if (!parsed.colorSystem || !parsed.typography || !parsed.guidelines || !parsed.uiSpecs) {
+                    throw new Error('Nedostaju obavezna polja u AI odgovoru.');
+                }
+                if (!parsed.guidelines.dos || !parsed.guidelines.donts) {
+                    parsed.guidelines.dos = parsed.guidelines.dos || [];
+                    parsed.guidelines.donts = parsed.guidelines.donts || [];
+                    parsed.guidelines.always = parsed.guidelines.always || [];
+                }
+                return parsed;
+            } catch (parseError) {
+                if (parseError instanceof SyntaxError) {
+                    throw new Error('AI je vratio neispravan JSON format. Pokušajte ponovo.');
+                }
+                throw parseError;
+            }
         }
 
         function calculateContrast(hex1, hex2) {
@@ -1724,11 +1914,12 @@ KRITIČNA PRAVILA:
 
         function renderBrandPage(system) {
             const colors = system.colorSystem;
-            const contrastActionLight = calculateContrast(colors.action, colors.light);
 
             // Store system in global variable for PDF generation
             window.brandSystem = system;
             window.brandFormData = formData;
+
+            const safeBrandName = sanitizeHTML(formData.brandName);
 
             // Show success message with prominent PDF button
             const html = `
@@ -1737,7 +1928,7 @@ KRITIČNA PRAVILA:
                     <div class="loading-text">Brend Identitet Uspešno Generisan!</div>
                     <div class="loading-sub" style="margin: 30px auto; max-width: 500px;">
                         Vaš kompletan Wheeler Brand Identity System je spreman.<br>
-                        <strong>${formData.brandName}</strong> sada ima profesionalni vizuelni identitet.
+                        <strong>${safeBrandName}</strong> sada ima profesionalni vizuelni identitet.
                     </div>
                     <button onclick="generateAndPrintPDF()" style="
                         padding: 30px 60px;
@@ -1789,122 +1980,143 @@ KRITIČNA PRAVILA:
             const formData = window.brandFormData;
             const colors = system.colorSystem;
 
-            // Get border radius value
-            const borderRadius = system.uiSpecs.borderRadius.split(' ')[0];
+            // Sanitize all dynamic values
+            const safeName = sanitizeHTML(formData.brandName);
+            const safeUniqueness = sanitizeHTML(system.uniquenessStatement || formData.superpower);
+            const safeReasoning = sanitizeHTML(colors.reasoning);
+            const safeHeadline = sanitizeHTML(system.typography.headline);
+            const safeBody = sanitizeHTML(system.typography.body);
+            const safeLogoPrompt = sanitizeHTML(system.logoConceptPrompt);
+
+            // Validate hex colors to prevent style injection
+            const hexPattern = /^#[0-9A-Fa-f]{3,8}$/;
+            const safeColor = (c) => hexPattern.test(c) ? c : '#000000';
+            const sc = {
+                identity: safeColor(colors.identity),
+                support: safeColor(colors.support),
+                action: safeColor(colors.action),
+                light: safeColor(colors.light),
+                dark: safeColor(colors.dark)
+            };
+
+            // Validate border radius
+            const borderRadius = /^[\d.]+(px|rem|em|%)$/.test(system.uiSpecs.borderRadius.split(' ')[0])
+                ? system.uiSpecs.borderRadius.split(' ')[0]
+                : '12px';
 
             // Create PDF content
             const pdfHTML = `
                 <div id="pdfContent">
                     <!-- HERO -->
-                    <div class="pdf-hero" style="background: ${colors.identity}; color: ${colors.light};">
-                        <div class="pdf-brand-name" style="font-family: '${system.typography.headline}', sans-serif;">
-                            ${formData.brandName}
+                    <div class="pdf-hero" style="background: ${sc.identity}; color: ${sc.light};">
+                        <div class="pdf-brand-name" style="font-family: '${safeHeadline}', sans-serif;">
+                            ${safeName}
                         </div>
-                        <div class="pdf-onliness" style="font-family: '${system.typography.body}', sans-serif;">
-                            ${system.uniquenessStatement || formData.superpower}
+                        <div class="pdf-onliness" style="font-family: '${safeBody}', sans-serif;">
+                            ${safeUniqueness}
                         </div>
                     </div>
 
                     <!-- COLOR SYSTEM -->
-                    <div class="pdf-section" style="background: ${colors.light};">
-                        <h2 class="pdf-heading" style="color: ${colors.identity}; font-family: '${system.typography.headline}', sans-serif;">
+                    <div class="pdf-section" style="background: ${sc.light};">
+                        <h2 class="pdf-heading" style="color: ${sc.identity}; font-family: '${safeHeadline}', sans-serif;">
                             Wheeler Color System
                         </h2>
                         <div class="pdf-color-blocks">
-                            <div class="pdf-color-block" style="background: ${colors.identity}; color: ${colors.light}; border-radius: ${borderRadius};">
+                            <div class="pdf-color-block" style="background: ${sc.identity}; color: ${sc.light}; border-radius: ${borderRadius};">
                                 <div class="pdf-color-label">IDENTITY</div>
-                                <div class="pdf-color-hex">${colors.identity}</div>
+                                <div class="pdf-color-hex">${sanitizeHTML(sc.identity)}</div>
                             </div>
-                            <div class="pdf-color-block" style="background: ${colors.support}; color: ${colors.light}; border-radius: ${borderRadius};">
+                            <div class="pdf-color-block" style="background: ${sc.support}; color: ${sc.light}; border-radius: ${borderRadius};">
                                 <div class="pdf-color-label">SUPPORT</div>
-                                <div class="pdf-color-hex">${colors.support}</div>
+                                <div class="pdf-color-hex">${sanitizeHTML(sc.support)}</div>
                             </div>
-                            <div class="pdf-color-block" style="background: ${colors.action}; color: ${colors.dark}; border-radius: ${borderRadius};">
+                            <div class="pdf-color-block" style="background: ${sc.action}; color: ${sc.dark}; border-radius: ${borderRadius};">
                                 <div class="pdf-color-label">ACTION</div>
-                                <div class="pdf-color-hex">${colors.action}</div>
+                                <div class="pdf-color-hex">${sanitizeHTML(sc.action)}</div>
                             </div>
-                            <div class="pdf-color-block" style="background: ${colors.light}; color: ${colors.dark}; border: 3px solid ${colors.dark}; border-radius: ${borderRadius};">
+                            <div class="pdf-color-block" style="background: ${sc.light}; color: ${sc.dark}; border: 3px solid ${sc.dark}; border-radius: ${borderRadius};">
                                 <div class="pdf-color-label">LIGHT</div>
-                                <div class="pdf-color-hex">${colors.light}</div>
+                                <div class="pdf-color-hex">${sanitizeHTML(sc.light)}</div>
                             </div>
-                            <div class="pdf-color-block" style="background: ${colors.dark}; color: ${colors.light}; border-radius: ${borderRadius};">
+                            <div class="pdf-color-block" style="background: ${sc.dark}; color: ${sc.light}; border-radius: ${borderRadius};">
                                 <div class="pdf-color-label">DARK</div>
-                                <div class="pdf-color-hex">${colors.dark}</div>
+                                <div class="pdf-color-hex">${sanitizeHTML(sc.dark)}</div>
                             </div>
                         </div>
-                        <p style="font-family: '${system.typography.body}', sans-serif; font-size: 18px; line-height: 1.8; color: ${colors.dark}; opacity: 0.8;">
-                            ${colors.reasoning}
+                        <p style="font-family: '${safeBody}', sans-serif; font-size: 18px; line-height: 1.8; color: ${sc.dark}; opacity: 0.8;">
+                            ${safeReasoning}
                         </p>
                     </div>
 
                     <!-- TYPOGRAPHY -->
-                    <div class="pdf-section" style="background: ${colors.support}20;">
-                        <h2 class="pdf-heading" style="color: ${colors.identity}; font-family: '${system.typography.headline}', sans-serif;">
+                    <div class="pdf-section" style="background: ${sc.support}20;">
+                        <h2 class="pdf-heading" style="color: ${sc.identity}; font-family: '${safeHeadline}', sans-serif;">
                             Typography System
                         </h2>
                         <div class="pdf-typo-showcase">
                             <div class="pdf-typo-sample">
-                                <div class="pdf-typo-label" style="color: ${colors.dark}; font-family: '${system.typography.body}', sans-serif;">HEADLINE FONT</div>
-                                <div class="pdf-typo-display" style="color: ${colors.identity}; font-family: '${system.typography.headline}', sans-serif;">
+                                <div class="pdf-typo-label" style="color: ${sc.dark}; font-family: '${safeBody}', sans-serif;">HEADLINE FONT</div>
+                                <div class="pdf-typo-display" style="color: ${sc.identity}; font-family: '${safeHeadline}', sans-serif;">
                                     Aa Bb Cc Dd Ee
                                 </div>
-                                <div class="pdf-typo-name" style="color: ${colors.dark}; font-family: '${system.typography.body}', sans-serif;">
-                                    ${system.typography.headline}
+                                <div class="pdf-typo-name" style="color: ${sc.dark}; font-family: '${safeBody}', sans-serif;">
+                                    ${safeHeadline}
                                 </div>
                             </div>
                             <div class="pdf-typo-sample">
-                                <div class="pdf-typo-label" style="color: ${colors.dark}; font-family: '${system.typography.body}', sans-serif;">BODY FONT</div>
-                                <div class="pdf-typo-display" style="color: ${colors.dark}; font-family: '${system.typography.body}', sans-serif;">
+                                <div class="pdf-typo-label" style="color: ${sc.dark}; font-family: '${safeBody}', sans-serif;">BODY FONT</div>
+                                <div class="pdf-typo-display" style="color: ${sc.dark}; font-family: '${safeBody}', sans-serif;">
                                     Aa Bb Cc Dd Ee
                                 </div>
-                                <div class="pdf-typo-name" style="color: ${colors.dark}; font-family: '${system.typography.body}', sans-serif;">
-                                    ${system.typography.body}
+                                <div class="pdf-typo-name" style="color: ${sc.dark}; font-family: '${safeBody}', sans-serif;">
+                                    ${safeBody}
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- UI COMPONENTS -->
-                    <div class="pdf-section" style="background: ${colors.light};">
-                        <h2 class="pdf-heading" style="color: ${colors.identity}; font-family: '${system.typography.headline}', sans-serif;">
+                    <div class="pdf-section" style="background: ${sc.light};">
+                        <h2 class="pdf-heading" style="color: ${sc.identity}; font-family: '${safeHeadline}', sans-serif;">
                             UI Components
                         </h2>
                         <div class="pdf-ui-grid">
                             <div class="pdf-ui-card" style="background: white; border-radius: ${borderRadius};">
-                                <div class="pdf-ui-title" style="color: ${colors.identity}; font-family: '${system.typography.body}', sans-serif;">BUTTONS</div>
-                                <button class="pdf-button" style="background: ${colors.action}; color: ${colors.dark}; border-radius: ${borderRadius}; font-family: '${system.typography.body}', sans-serif;">
+                                <div class="pdf-ui-title" style="color: ${sc.identity}; font-family: '${safeBody}', sans-serif;">BUTTONS</div>
+                                <button class="pdf-button" style="background: ${sc.action}; color: ${sc.dark}; border-radius: ${borderRadius}; font-family: '${safeBody}', sans-serif;">
                                     Primary CTA
                                 </button>
-                                <button class="pdf-button" style="background: transparent; color: ${colors.identity}; border: 2px solid ${colors.identity}; border-radius: ${borderRadius}; font-family: '${system.typography.body}', sans-serif;">
+                                <button class="pdf-button" style="background: transparent; color: ${sc.identity}; border: 2px solid ${sc.identity}; border-radius: ${borderRadius}; font-family: '${safeBody}', sans-serif;">
                                     Secondary
                                 </button>
                             </div>
                             <div class="pdf-ui-card" style="background: white; border-radius: ${borderRadius};">
-                                <div class="pdf-ui-title" style="color: ${colors.identity}; font-family: '${system.typography.body}', sans-serif;">INPUTS</div>
-                                <input class="pdf-input" placeholder="Email address..." style="border-color: ${colors.support}; border-radius: ${borderRadius}; font-family: '${system.typography.body}', sans-serif; color: ${colors.dark};" readonly>
+                                <div class="pdf-ui-title" style="color: ${sc.identity}; font-family: '${safeBody}', sans-serif;">INPUTS</div>
+                                <input class="pdf-input" placeholder="Email address..." style="border-color: ${sc.support}; border-radius: ${borderRadius}; font-family: '${safeBody}', sans-serif; color: ${sc.dark};" readonly>
                             </div>
                         </div>
                     </div>
 
                     <!-- GUIDELINES -->
-                    <div class="pdf-section" style="background: ${colors.support}20;">
-                        <h2 class="pdf-heading" style="color: ${colors.identity}; font-family: '${system.typography.headline}', sans-serif;">
+                    <div class="pdf-section" style="background: ${sc.support}20;">
+                        <h2 class="pdf-heading" style="color: ${sc.identity}; font-family: '${safeHeadline}', sans-serif;">
                             Brand Guidelines
                         </h2>
                         <div class="pdf-guidelines-grid">
-                            ${system.guidelines.dos.map(text => `
+                            ${(system.guidelines.dos || []).map(text => `
                                 <div class="pdf-guideline" style="background: #ECFDF5; border-color: #10B981; border-radius: ${borderRadius};">
                                     <span class="pdf-guideline-icon">&#x2705;</span>
-                                    <span class="pdf-guideline-text" style="font-family: '${system.typography.body}', sans-serif; color: #065F46;">
-                                        <strong>UVEK:</strong> ${text}
+                                    <span class="pdf-guideline-text" style="font-family: '${safeBody}', sans-serif; color: #065F46;">
+                                        <strong>UVEK:</strong> ${sanitizeHTML(text)}
                                     </span>
                                 </div>
                             `).join('')}
-                            ${system.guidelines.donts.map(text => `
+                            ${(system.guidelines.donts || []).map(text => `
                                 <div class="pdf-guideline" style="background: #FEF2F2; border-color: #EF4444; border-radius: ${borderRadius};">
                                     <span class="pdf-guideline-icon">&#x274C;</span>
-                                    <span class="pdf-guideline-text" style="font-family: '${system.typography.body}', sans-serif; color: #991B1B;">
-                                        <strong>NIKAD:</strong> ${text}
+                                    <span class="pdf-guideline-text" style="font-family: '${safeBody}', sans-serif; color: #991B1B;">
+                                        <strong>NIKAD:</strong> ${sanitizeHTML(text)}
                                     </span>
                                 </div>
                             `).join('')}
@@ -1913,14 +2125,14 @@ KRITIČNA PRAVILA:
 
                     <!-- LOGO CONCEPT -->
                     <div class="pdf-logo-section">
-                        <h2 class="pdf-heading" style="color: ${colors.identity}; font-family: '${system.typography.headline}', sans-serif;">
+                        <h2 class="pdf-heading" style="color: ${sc.identity}; font-family: '${safeHeadline}', sans-serif;">
                             Logo Concept Prompt
                         </h2>
-                        <p style="font-family: '${system.typography.body}', sans-serif; font-size: 18px; color: ${colors.dark}; margin-bottom: 20px;">
+                        <p style="font-family: '${safeBody}', sans-serif; font-size: 18px; color: ${sc.dark}; margin-bottom: 20px;">
                             Koristite ovaj prompt u Midjourney-u za generisanje logo koncepata:
                         </p>
                         <div class="pdf-logo-prompt">
-${system.logoConceptPrompt}
+${safeLogoPrompt}
                         </div>
                     </div>
                 </div>
@@ -1940,11 +2152,12 @@ ${system.logoConceptPrompt}
         }
 
         function showError(message) {
+            const safeMessage = sanitizeHTML(message);
             document.getElementById('brandContent').innerHTML = `
                 <div class="loading-state">
                     <div style="font-size: 60px">&#x274C;</div>
                     <div class="loading-text">Greška u generisanju</div>
-                    <p style="color: #666; margin-top: 20px; max-width: 600px;">${message}</p>
+                    <p style="color: #666; margin-top: 20px; max-width: 600px;">${safeMessage}</p>
                     <button class="btn-next" onclick="location.reload()" style="margin-top: 30px;">
                         Pokušaj ponovo
                     </button>
