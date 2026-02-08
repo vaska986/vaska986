@@ -251,17 +251,16 @@
 
         .loading-spinner {
             font-size: 60px;
-            animation: spin 2s linear infinite, pulse 1.5s ease-in-out infinite;
+            display: inline-block;
+            animation: spinPulse 2s ease-in-out infinite;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.1); }
+        @keyframes spinPulse {
+            0% { transform: rotate(0deg) scale(1); opacity: 1; }
+            25% { transform: rotate(90deg) scale(1.1); opacity: 0.7; }
+            50% { transform: rotate(180deg) scale(1); opacity: 1; }
+            75% { transform: rotate(270deg) scale(1.1); opacity: 0.7; }
+            100% { transform: rotate(360deg) scale(1); opacity: 1; }
         }
 
         .loading-text {
@@ -602,7 +601,7 @@
             background: #764ba2;
         }
 
-        .pdf-section {
+        .pdf-download-section {
             padding: 40px 60px;
             background: #F3F4F6;
             text-align: center;
@@ -1428,6 +1427,10 @@
             return div.innerHTML;
         }
 
+        function sanitizeFontName(name) {
+            return name.replace(/[^a-zA-Z0-9 \-]/g, '');
+        }
+
         const formData = {};
         let currentSection = 1;
         const totalSections = 6;
@@ -1711,11 +1714,20 @@
         }
 
         async function callAI() {
+            // Sanitize free-text inputs to prevent prompt injection
+            const sanitizeInput = (str) => {
+                if (!str) return '';
+                return str
+                    .replace(/[{}[\]]/g, '')         // Remove JSON-breaking chars
+                    .replace(/\n{3,}/g, '\n\n')      // Collapse excessive newlines
+                    .substring(0, 500);               // Limit length
+            };
+
             const fullContext = {
-                name: formData.brandName,
+                name: sanitizeInput(formData.brandName),
                 industry: brandTranslator.getIndustry(formData.category),
-                mission: formData.superpower,
-                vision: formData.vision,
+                mission: sanitizeInput(formData.superpower),
+                vision: sanitizeInput(formData.vision),
                 transformation: brandTranslator.getTransformation(formData.transformation),
                 feeling: brandTranslator.getFeeling(formData.feeling),
                 archetype: formData.archetype,
@@ -1788,11 +1800,11 @@ Izradi JSON sa sledećom strukturom (ISKLJUČIVO JSON, bez markdown):
   "brandEssence": "Srž brenda u 5-7 reči - destilacija celog identiteta",
 
   "colorSystem": {
-    "identity": "#HEX - Primarna boja identiteta",
-    "support": "#HEX - Sekundarna boja podrške",
-    "action": "#HEX - Boja akcije (poziva na radnju)",
-    "light": "#HEX - Svetla boja pozadine",
-    "dark": "#HEX - Tamna boja teksta",
+    "identity": "#HEX (SAMO hex kod, bez teksta - Primarna boja identiteta)",
+    "support": "#HEX (SAMO hex kod, bez teksta - Sekundarna boja podrške)",
+    "action": "#HEX (SAMO hex kod, bez teksta - Boja akcije)",
+    "light": "#HEX (SAMO hex kod, bez teksta - Svetla boja pozadine)",
+    "dark": "#HEX (SAMO hex kod, bez teksta - Tamna boja teksta)",
     "reasoning": "Detaljno objašnjenje NA SRPSKOM (3-4 rečenice): Kako boje podržavaju emocionalnu transformaciju (${fullContext.transformation}), arhetip (${fullContext.archetype}), i materijalnost (${fullContext.material})."
   },
 
@@ -1860,8 +1872,12 @@ KRITIČNA PRAVILA:
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`API greška: ${response.status} - ${errorData.error?.message || 'Nepoznata greška'}`);
+                let errorMsg = 'Nepoznata greška';
+                try {
+                    const errorData = await response.json();
+                    errorMsg = errorData.error?.message || errorMsg;
+                } catch (_) {}
+                throw new Error(`API greška: ${response.status} - ${errorMsg}`);
             }
 
             const data = await response.json();
@@ -1887,6 +1903,16 @@ KRITIČNA PRAVILA:
                     parsed.guidelines.donts = parsed.guidelines.donts || [];
                     parsed.guidelines.always = parsed.guidelines.always || [];
                 }
+                const extractHex = (val) => {
+                    if (typeof val !== 'string') return '#000000';
+                    const match = val.match(/#[0-9A-Fa-f]{3,8}/);
+                    return match ? match[0] : '#000000';
+                };
+                parsed.colorSystem.identity = extractHex(parsed.colorSystem.identity);
+                parsed.colorSystem.support = extractHex(parsed.colorSystem.support);
+                parsed.colorSystem.action = extractHex(parsed.colorSystem.action);
+                parsed.colorSystem.light = extractHex(parsed.colorSystem.light);
+                parsed.colorSystem.dark = extractHex(parsed.colorSystem.dark);
                 return parsed;
             } catch (parseError) {
                 if (parseError instanceof SyntaxError) {
@@ -1894,25 +1920,6 @@ KRITIČNA PRAVILA:
                 }
                 throw parseError;
             }
-        }
-
-        function calculateContrast(hex1, hex2) {
-            const getLuminance = (hex) => {
-                const rgb = parseInt(hex.slice(1), 16);
-                const r = (rgb >> 16) & 0xff;
-                const g = (rgb >> 8) & 0xff;
-                const b = (rgb >> 0) & 0xff;
-                const [rs, gs, bs] = [r, g, b].map(c => {
-                    c = c / 255;
-                    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-                });
-                return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
-            };
-            const l1 = getLuminance(hex1);
-            const l2 = getLuminance(hex2);
-            const lighter = Math.max(l1, l2);
-            const darker = Math.min(l1, l2);
-            return (lighter + 0.05) / (darker + 0.05);
         }
 
         function renderBrandPage(system) {
@@ -1928,9 +1935,9 @@ KRITIČNA PRAVILA:
             const html = `
                 <div class="loading-state">
                     <div style="font-size: 80px; margin-bottom: 20px;">&#x2705;</div>
-                    <div class="loading-text">Brend Identitet Uspešno Generisan!</div>
+                    <div class="loading-text">Vizuelni identitet uspešno generisan!</div>
                     <div class="loading-sub" style="margin: 30px auto; max-width: 500px;">
-                        Vaš kompletan Wheeler Brand Identity System je spreman.<br>
+                        Vaš kompletan Wheeler sistem vizuelnog identiteta je spreman.<br>
                         <strong>${safeBrandName}</strong> sada ima profesionalni vizuelni identitet.
                     </div>
                     <button onclick="generateAndPrintPDF()" style="
@@ -1971,7 +1978,9 @@ KRITIČNA PRAVILA:
 
             // Load fonts for PDF
             const link = document.createElement('link');
-            link.href = `https://fonts.googleapis.com/css2?family=${system.typography.headline.replace(/ /g, '+')}:wght@400;600;700;900&family=${system.typography.body.replace(/ /g, '+')}:wght@400;500;600;700&display=swap`;
+            const headlineFont = encodeURIComponent(sanitizeFontName(system.typography.headline));
+            const bodyFont = encodeURIComponent(sanitizeFontName(system.typography.body));
+            link.href = `https://fonts.googleapis.com/css2?family=${headlineFont}:wght@400;600;700;900&family=${bodyFont}:wght@400;500;600;700&display=swap`;
             link.rel = 'stylesheet';
             document.head.appendChild(link);
 
@@ -1979,6 +1988,13 @@ KRITIČNA PRAVILA:
         }
 
         function generateAndPrintPDF() {
+            if (!window.brandSystem || !window.brandFormData) {
+                alert('Greška: Podaci o brendu nisu dostupni. Molimo pokrenite generisanje ponovo.');
+                return;
+            }
+
+            try {
+
             const system = window.brandSystem;
             const formData = window.brandFormData;
             const colors = system.colorSystem;
@@ -1987,8 +2003,8 @@ KRITIČNA PRAVILA:
             const safeName = sanitizeHTML(formData.brandName);
             const safeUniqueness = sanitizeHTML(system.uniquenessStatement || formData.superpower);
             const safeReasoning = sanitizeHTML(colors.reasoning);
-            const safeHeadline = sanitizeHTML(system.typography.headline);
-            const safeBody = sanitizeHTML(system.typography.body);
+            const safeHeadline = sanitizeFontName(system.typography.headline);
+            const safeBody = sanitizeFontName(system.typography.body);
             const safeLogoPrompt = sanitizeHTML(system.logoConceptPrompt);
 
             // Validate hex colors to prevent style injection
@@ -2023,27 +2039,27 @@ KRITIČNA PRAVILA:
                     <!-- COLOR SYSTEM -->
                     <div class="pdf-section" style="background: ${sc.light};">
                         <h2 class="pdf-heading" style="color: ${sc.identity}; font-family: '${safeHeadline}', sans-serif;">
-                            Wheeler Color System
+                            Sistem boja
                         </h2>
                         <div class="pdf-color-blocks">
                             <div class="pdf-color-block" style="background: ${sc.identity}; color: ${sc.light}; border-radius: ${borderRadius};">
-                                <div class="pdf-color-label">IDENTITY</div>
+                                <div class="pdf-color-label">PRIMARNA</div>
                                 <div class="pdf-color-hex">${sanitizeHTML(sc.identity)}</div>
                             </div>
                             <div class="pdf-color-block" style="background: ${sc.support}; color: ${sc.light}; border-radius: ${borderRadius};">
-                                <div class="pdf-color-label">SUPPORT</div>
+                                <div class="pdf-color-label">SEKUNDARNA</div>
                                 <div class="pdf-color-hex">${sanitizeHTML(sc.support)}</div>
                             </div>
                             <div class="pdf-color-block" style="background: ${sc.action}; color: ${sc.dark}; border-radius: ${borderRadius};">
-                                <div class="pdf-color-label">ACTION</div>
+                                <div class="pdf-color-label">AKCIJA</div>
                                 <div class="pdf-color-hex">${sanitizeHTML(sc.action)}</div>
                             </div>
                             <div class="pdf-color-block" style="background: ${sc.light}; color: ${sc.dark}; border: 3px solid ${sc.dark}; border-radius: ${borderRadius};">
-                                <div class="pdf-color-label">LIGHT</div>
+                                <div class="pdf-color-label">SVETLA</div>
                                 <div class="pdf-color-hex">${sanitizeHTML(sc.light)}</div>
                             </div>
                             <div class="pdf-color-block" style="background: ${sc.dark}; color: ${sc.light}; border-radius: ${borderRadius};">
-                                <div class="pdf-color-label">DARK</div>
+                                <div class="pdf-color-label">TAMNA</div>
                                 <div class="pdf-color-hex">${sanitizeHTML(sc.dark)}</div>
                             </div>
                         </div>
@@ -2055,11 +2071,11 @@ KRITIČNA PRAVILA:
                     <!-- TYPOGRAPHY -->
                     <div class="pdf-section" style="background: ${sc.support}20;">
                         <h2 class="pdf-heading" style="color: ${sc.identity}; font-family: '${safeHeadline}', sans-serif;">
-                            Typography System
+                            Tipografski sistem
                         </h2>
                         <div class="pdf-typo-showcase">
                             <div class="pdf-typo-sample">
-                                <div class="pdf-typo-label" style="color: ${sc.dark}; font-family: '${safeBody}', sans-serif;">HEADLINE FONT</div>
+                                <div class="pdf-typo-label" style="color: ${sc.dark}; font-family: '${safeBody}', sans-serif;">FONT NASLOVA</div>
                                 <div class="pdf-typo-display" style="color: ${sc.identity}; font-family: '${safeHeadline}', sans-serif;">
                                     Aa Bb Cc Dd Ee
                                 </div>
@@ -2068,7 +2084,7 @@ KRITIČNA PRAVILA:
                                 </div>
                             </div>
                             <div class="pdf-typo-sample">
-                                <div class="pdf-typo-label" style="color: ${sc.dark}; font-family: '${safeBody}', sans-serif;">BODY FONT</div>
+                                <div class="pdf-typo-label" style="color: ${sc.dark}; font-family: '${safeBody}', sans-serif;">FONT TEKSTA</div>
                                 <div class="pdf-typo-display" style="color: ${sc.dark}; font-family: '${safeBody}', sans-serif;">
                                     Aa Bb Cc Dd Ee
                                 </div>
@@ -2082,21 +2098,21 @@ KRITIČNA PRAVILA:
                     <!-- UI COMPONENTS -->
                     <div class="pdf-section" style="background: ${sc.light};">
                         <h2 class="pdf-heading" style="color: ${sc.identity}; font-family: '${safeHeadline}', sans-serif;">
-                            UI Components
+                            Komponente interfejsa
                         </h2>
                         <div class="pdf-ui-grid">
                             <div class="pdf-ui-card" style="background: white; border-radius: ${borderRadius};">
-                                <div class="pdf-ui-title" style="color: ${sc.identity}; font-family: '${safeBody}', sans-serif;">BUTTONS</div>
+                                <div class="pdf-ui-title" style="color: ${sc.identity}; font-family: '${safeBody}', sans-serif;">DUGMAD</div>
                                 <button class="pdf-button" style="background: ${sc.action}; color: ${sc.dark}; border-radius: ${borderRadius}; font-family: '${safeBody}', sans-serif;">
-                                    Primary CTA
+                                    Primarno dugme
                                 </button>
                                 <button class="pdf-button" style="background: transparent; color: ${sc.identity}; border: 2px solid ${sc.identity}; border-radius: ${borderRadius}; font-family: '${safeBody}', sans-serif;">
-                                    Secondary
+                                    Sekundarno
                                 </button>
                             </div>
                             <div class="pdf-ui-card" style="background: white; border-radius: ${borderRadius};">
-                                <div class="pdf-ui-title" style="color: ${sc.identity}; font-family: '${safeBody}', sans-serif;">INPUTS</div>
-                                <input class="pdf-input" placeholder="Email address..." style="border-color: ${sc.support}; border-radius: ${borderRadius}; font-family: '${safeBody}', sans-serif; color: ${sc.dark};" readonly>
+                                <div class="pdf-ui-title" style="color: ${sc.identity}; font-family: '${safeBody}', sans-serif;">POLJA ZA UNOS</div>
+                                <input class="pdf-input" placeholder="Email adresa..." style="border-color: ${sc.support}; border-radius: ${borderRadius}; font-family: '${safeBody}', sans-serif; color: ${sc.dark};" readonly>
                             </div>
                         </div>
                     </div>
@@ -2104,7 +2120,7 @@ KRITIČNA PRAVILA:
                     <!-- GUIDELINES -->
                     <div class="pdf-section" style="background: ${sc.support}20;">
                         <h2 class="pdf-heading" style="color: ${sc.identity}; font-family: '${safeHeadline}', sans-serif;">
-                            Brand Guidelines
+                            Vodič kroz identitet
                         </h2>
                         <div class="pdf-guidelines-grid">
                             ${(system.guidelines.dos || []).map(text => `
@@ -2129,7 +2145,7 @@ KRITIČNA PRAVILA:
                     <!-- LOGO CONCEPT -->
                     <div class="pdf-logo-section">
                         <h2 class="pdf-heading" style="color: ${sc.identity}; font-family: '${safeHeadline}', sans-serif;">
-                            Logo Concept Prompt
+                            Koncept logotipa
                         </h2>
                         <p style="font-family: '${safeBody}', sans-serif; font-size: 18px; color: ${sc.dark}; margin-bottom: 20px;">
                             Koristite ovaj prompt u Midjourney-u za generisanje logo koncepata:
@@ -2148,10 +2164,22 @@ ${safeLogoPrompt}
             }
             document.body.insertAdjacentHTML('beforeend', pdfHTML);
 
-            // Trigger print
-            setTimeout(() => {
-                window.print();
-            }, 500);
+            // Wait for fonts to load, then trigger print
+            if (document.fonts && document.fonts.ready) {
+                document.fonts.ready.then(() => {
+                    window.print();
+                });
+            } else {
+                // Fallback for browsers without Font Loading API
+                setTimeout(() => {
+                    window.print();
+                }, 800);
+            }
+
+            } catch (err) {
+                console.error('PDF greška:', err);
+                alert('Greška pri generisanju PDF-a: ' + err.message);
+            }
         }
 
         function showError(message) {
