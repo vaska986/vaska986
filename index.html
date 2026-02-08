@@ -1455,7 +1455,7 @@
                         &bull; Prevodi strategiju u vizuelne direktive (OBLIK &rarr; BOJA)<br>
                         &bull; Generiše paletu od 5 boja sa provером pristupačnosti (WCAG)<br>
                         &bull; Definiše tipografsku hijerarhiju i specifikacije interfejsa<br>
-                        &bull; Kreira Midjourney prompt za prikaz knjige brenda<br><br>
+                        &bull; Kreira prompt za generisanje logotipa (ChatGPT / Gemini)<br><br>
                         <em>Proces može trajati 20-40 sekundi...</em>
                     </div>
                 </div>
@@ -1499,7 +1499,7 @@
 
             const prompt = `Ti si vodeći direktor brendinga sa 15+ godina iskustva. Kreiraj Nacrt vizuelnog identiteta prateći Wheeler-ov proces - PRVO OBLIK, ZATIM BOJA.
 
-VAŽNO: Svi tekstualni odgovori (reasoning, guidelines, usageMatrix, description) MORAJU biti na SRPSKOM jeziku. Logo prompt ostaje na engleskom jer se koristi za Midjourney.
+VAŽNO: Svi odgovori MORAJU biti na SRPSKOM jeziku, uključujući i logo prompt (koristi se za ChatGPT / Gemini koji razumeju srpski).
 
 ═══════════════════════════════════════════════════════════
 STRATEŠKI FUNDAMENT (Wheeler Faza 1-2)
@@ -1600,7 +1600,7 @@ Izradi JSON sa sledećom strukturom (ISKLJUČIVO JSON, bez markdown):
     ]
   },
 
-  "logoConceptPrompt": "Professional logo presentation mockup, 4 variations displayed on premium white background: [1] Pictorial mark - symbolic icon only, [2] Minimalist wordmark - typography-focused, [3] Combination lockup - icon + text integrated, [4] Favicon - simplified for small sizes. Design inspired by ${fullContext.archetype} archetype, geometry: ${fullContext.geometryDesc}, primary colors: [insert ${fullContext.name}'s Identity color ${fullContext.vision}]. Studio photography lighting, ultra high quality branding sheet, portfolio worthy presentation, --ar 16:9 --style raw --v 6.1 --q 2"
+  "logoConceptPrompt": "Dizajniraj profesionalnu prezentaciju logotipa sa 4 varijacije na beloj pozadini: [1] Piktogram — simbolička ikona bez teksta, [2] Minimalistički wordmark — fokus na tipografiju, [3] Kombinovani logo — ikona + tekst integrisani, [4] Favicon — pojednostavljen za male dimenzije. Dizajn inspirisan arhetipom ${fullContext.archetype}, geometrija: ${fullContext.geometryDesc}, primarna boja identiteta brenda ${fullContext.name}. Vizija klijenta: ${fullContext.vision}. Studijsko osvetljenje, ultra visok kvalitet, prezentacija za portfolio brending agencije. Format 16:9, fotorealistična vizualizacija."
 }
 
 KRITIČNA PRAVILA:
@@ -1811,7 +1811,7 @@ KRITIČNA PRAVILA:
                 <section class="brand-logo-section" style="background:${sc.dark};">
                     <div class="brand-logo-inner">
                         <h2 style="font-family:'${safeHeadline}',sans-serif;color:${sc.light};font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 16px;">Vizuelni koncept</h2>
-                        <p style="font-family:'${safeBody}',sans-serif;color:${sc.light};opacity:0.6;font-size:16px;margin:0 0 36px;">Prompt za generisanje logotipa (Midjourney / DALL-E)</p>
+                        <p style="font-family:'${safeBody}',sans-serif;color:${sc.light};opacity:0.6;font-size:16px;margin:0 0 36px;">Prompt za generisanje logotipa (ChatGPT / Gemini Nano Banana)</p>
                         <div style="background:${sc.dark};border:1px solid ${sc.light}20;padding:32px;border-radius:${br};font-family:'Courier New',monospace;font-size:14px;line-height:1.8;color:${sc.light};opacity:0.85;text-align:left;max-width:800px;margin:0 auto;white-space:pre-wrap;">${safeLogoPrompt}</div>
                     </div>
                 </section>
@@ -1855,13 +1855,15 @@ KRITIČNA PRAVILA:
             const actionBar = contentClone.querySelector('[style*="position: sticky"]');
             if (actionBar) actionBar.remove();
 
-            // Collect all .pdf-* CSS rules from current stylesheet
-            let pdfCSS = '';
+            // Collect all brand-related CSS rules from current stylesheet
+            let brandCSS = '';
             for (const sheet of document.styleSheets) {
                 try {
                     for (const rule of sheet.cssRules) {
-                        if (rule.cssText && (rule.cssText.includes('.pdf-') || rule.selectorText && rule.selectorText.includes('.pdf-'))) {
-                            pdfCSS += rule.cssText + '\n';
+                        const sel = rule.selectorText || '';
+                        const txt = rule.cssText || '';
+                        if (sel.includes('.brand-') || txt.includes('.brand-')) {
+                            brandCSS += txt + '\n';
                         }
                     }
                 } catch (e) {} // skip cross-origin stylesheets
@@ -1879,9 +1881,9 @@ KRITIČNA PRAVILA:
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: '${safeBody}', sans-serif; background: white; }
-${pdfCSS}
+${brandCSS}
 .print-bar { background: #10B981; color: white; padding: 16px 24px; text-align: center; font-family: system-ui, sans-serif; font-size: 15px; }
-@media print { .pdf-hero { page-break-after: always; } .pdf-section { page-break-inside: avoid; } .print-bar { display: none !important; } }
+@media print { .brand-hero-section { page-break-after: always; } .brand-story, .brand-typo-section, .brand-cta-section, .brand-values-section, .brand-logo-section { page-break-inside: avoid; } .print-bar, .brand-nav, .brand-action-bar { display: none !important; } }
 </style></head><body>
 <div class="print-bar">&#x1F4E2; Koristite <b>Ctrl+P</b> (ili <b>Cmd+P</b>) &rarr; <b>"Sačuvaj kao PDF"</b> za preuzimanje.</div>
 ${contentClone.innerHTML}
