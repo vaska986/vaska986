@@ -1,0 +1,1958 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheeler Brand Identity Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e0e0e0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .section {
+            padding: 40px;
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .section-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .question {
+            margin-bottom: 30px;
+        }
+
+        .question-label {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .placeholder-text {
+            font-size: 14px;
+            color: #999;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .card {
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            background: #fafafa;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        }
+
+        .card-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .card-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+            font-size: 15px;
+        }
+
+        .card-desc {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.3;
+        }
+
+        .slider-container {
+            margin-top: 15px;
+        }
+
+        .slider-row {
+            margin-bottom: 25px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 15px;
+            color: #666;
+        }
+
+        .slider-value {
+            display: block;
+            text-align: center;
+            margin-top: 8px;
+            font-weight: 600;
+            color: #667eea;
+            font-size: 14px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #e0e0e0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            gap: 15px;
+        }
+
+        button {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-prev {
+            background: #f0f0f0;
+            color: #333;
+            flex: 1;
+        }
+
+        .btn-prev:hover {
+            background: #e0e0e0;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 100px 40px;
+        }
+
+        .loading-spinner {
+            font-size: 60px;
+            animation: spin 2s linear infinite, pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        .loading-text {
+            font-size: 24px;
+            color: #333;
+            margin-top: 20px;
+            font-weight: 600;
+        }
+
+        .loading-sub {
+            font-size: 16px;
+            color: #666;
+            margin-top: 10px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+        }
+
+        .brand-page {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .brand-page.active {
+            display: block;
+        }
+
+        .brand-hero {
+            padding: 80px 60px;
+            text-align: center;
+        }
+
+        .brand-logo {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .brand-tagline {
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.5;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 18px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .color-section {
+            padding: 60px;
+            background: white;
+        }
+
+        .section-heading {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .ai-insight {
+            background: #FEF3C7;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border-left: 5px solid #F59E0B;
+        }
+
+        .ai-insight-title {
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #92400E;
+        }
+
+        .ai-insight-text {
+            color: #78350F;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+
+        .color-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .color-preview {
+            width: 100%;
+            height: 120px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .color-name {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .color-hex {
+            font-family: monospace;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .color-usage {
+            font-size: 13px;
+            color: #666;
+            font-weight: 600;
+            background: #fff;
+            padding: 8px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        .wcag-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+
+        .wcag-aaa {
+            background: #10B981;
+            color: white;
+        }
+
+        .wcag-aa {
+            background: #FBBF24;
+            color: #1F2937;
+        }
+
+        .typography-section {
+            padding: 60px;
+            background: #F9FAFB;
+        }
+
+        .typo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .typo-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .typo-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .typo-sample {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .typo-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .typo-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .ui-components-section {
+            padding: 60px;
+            background: #f9fafb;
+        }
+
+        .ui-showcase {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .ui-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .ui-card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .button-demo {
+            display: inline-block;
+            padding: 15px 35px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px 10px 10px 0;
+            border: none;
+        }
+
+        .input-demo {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            font-size: 15px;
+            margin: 10px 0;
+            font-family: inherit;
+        }
+
+        .guidelines-section {
+            padding: 60px;
+            background: white;
+        }
+
+        .guideline-grid {
+            display: grid;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .guideline-item {
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .guideline-do {
+            background: #ECFDF5;
+            border-color: #10B981;
+        }
+
+        .guideline-dont {
+            background: #FEF2F2;
+            border-color: #EF4444;
+        }
+
+        .guideline-always {
+            background: #FFF7ED;
+            border-color: #F59E0B;
+        }
+
+        .guideline-icon {
+            font-size: 24px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .guideline-text {
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .prompt-section {
+            padding: 60px;
+            background: #1F2937;
+            color: white;
+        }
+
+        .prompt-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .prompt-box {
+            background: #111827;
+            padding: 30px;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            max-height: 500px;
+            overflow-y: auto;
+            border: 2px solid #374151;
+        }
+
+        .copy-btn {
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: #764ba2;
+        }
+
+        .pdf-section {
+            padding: 40px 60px;
+            background: #F3F4F6;
+            text-align: center;
+        }
+
+        .pdf-btn {
+            display: inline-block;
+            padding: 18px 40px;
+            background: #DC2626;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px;
+        }
+
+        .pdf-btn:hover {
+            background: #B91C1C;
+            transform: translateY(-2px);
+        }
+
+        .pdf-instructions {
+            font-size: 14px;
+            color: #666;
+            margin-top: 15px;
+            font-style: italic;
+        }
+
+        .reset-section {
+            padding: 40px 60px;
+            text-align: center;
+            background: white;
+        }
+
+        .validation-error {
+            color: #EF4444;
+            font-size: 14px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .validation-error.show {
+            display: block;
+        }
+
+        /* PDF PRINT STYLES */
+        #pdfContent {
+            display: none;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #pdfContent, #pdfContent * {
+                visibility: visible;
+            }
+            #pdfContent {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                display: block !important;
+            }
+            .pdf-hero {
+                page-break-after: always;
+            }
+            .pdf-section {
+                page-break-inside: avoid;
+            }
+        }
+
+        .pdf-hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 100px 60px;
+            position: relative;
+        }
+
+        .pdf-brand-name {
+            font-size: 72px;
+            font-weight: 900;
+            margin-bottom: 40px;
+            letter-spacing: -2px;
+        }
+
+        .pdf-onliness {
+            font-size: 32px;
+            line-height: 1.4;
+            max-width: 800px;
+            margin: 0 auto;
+            font-weight: 600;
+            opacity: 0.95;
+        }
+
+        .pdf-section {
+            padding: 80px 60px;
+            min-height: 60vh;
+        }
+
+        .pdf-heading {
+            font-size: 48px;
+            font-weight: 900;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+
+        .pdf-color-blocks {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .pdf-color-block {
+            aspect-ratio: 1;
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        .pdf-color-label {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .pdf-color-hex {
+            font-size: 24px;
+            font-weight: 900;
+            font-family: monospace;
+        }
+
+        .pdf-typo-showcase {
+            margin: 60px 0;
+        }
+
+        .pdf-typo-sample {
+            margin-bottom: 40px;
+        }
+
+        .pdf-typo-label {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            opacity: 0.6;
+        }
+
+        .pdf-typo-display {
+            font-size: 64px;
+            font-weight: 900;
+            margin-bottom: 15px;
+        }
+
+        .pdf-typo-name {
+            font-size: 20px;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+
+        .pdf-ui-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .pdf-ui-card {
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        .pdf-ui-title {
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        .pdf-button {
+            padding: 18px 40px;
+            font-size: 18px;
+            font-weight: 700;
+            border: none;
+            cursor: default;
+            margin-right: 20px;
+            margin-bottom: 20px;
+        }
+
+        .pdf-input {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 16px;
+            border: 2px solid;
+            font-family: inherit;
+        }
+
+        .pdf-guidelines-grid {
+            display: grid;
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .pdf-guideline {
+            padding: 30px;
+            border-radius: 20px;
+            border-left: 6px solid;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .pdf-guideline-icon {
+            font-size: 36px;
+            flex-shrink: 0;
+        }
+
+        .pdf-guideline-text {
+            font-size: 18px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .pdf-logo-section {
+            background: #f5f5f5;
+            padding: 80px 60px;
+            text-align: center;
+        }
+
+        .pdf-logo-prompt {
+            background: #1F2937;
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            text-align: left;
+            max-width: 900px;
+            margin: 40px auto 0;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <!-- Section 1: Osnova -->
+        <div class="section active" id="section1">
+            <div class="section-title">&#x1F9ED; Osnova Brenda</div>
+            <div class="section-subtitle">Pocnimo sa osnovama - ko ste i sta radite?</div>
+
+            <div class="question">
+                <label class="question-label">Naziv brenda:</label>
+                <input type="text" id="brandName" placeholder="Unesite naziv vaseg brenda">
+                <div class="validation-error" id="brandNameError">&#x26A0;&#xFE0F; Naziv brenda je obavezan</div>
+            </div>
+
+            <div class="question">
+                <label class="question-label">Kategorija/Industrija:</label>
+                <div class="cards-grid">
+                    <div class="card" data-field="category" data-value="tech">
+                        <div class="card-icon">&#x1F4BB;</div>
+                        <div class="card-title">Tehnologija & Softver</div>
+                        <div class="card-desc">SaaS, IT, Digital</div>
+                    </div>
+                    <div class="card" data-field="category" data-value="consulting">
+                        <div class="card-icon">&#x1F4DA;</div>
+                        <div class="card-title">Konsultacije & Edukacija</div>
+                        <div class="card-desc">Coaching, Obuke</div>
+                    </div>
+                    <div class="card" data-field="category" data-value="products">
+                        <div class="card-icon">&#x1F6CD;&#xFE0F;</div>
+                        <div class="card-title">Proizvodi & E-commerce</div>
+                        <div class="card-desc">Fizicki proizvodi</div>
+                    </div>
+                    <div class="card" data-field="category" data-value="services">
+                        <div class="card-icon">&#x1F527;</div>
+                        <div class="card-title">Usluge & Zanatstvo</div>
+                        <div class="card-desc">B2B Services</div>
+                    </div>
+                </div>
+                <div class="validation-error" id="categoryError">&#x26A0;&#xFE0F; Odaberite kategoriju</div>
+            </div>
+
+            <div class="question">
+                <label class="question-label">Vasa "Supermoc" - Sta cinite jedinstvenim?</label>
+                <textarea id="superpower" placeholder='Formula: Pomazem [KOME] da [POSTIGNU STA] putem [JEDINSTVENOG PRISTUPA].'></textarea>
+                <div class="placeholder-text">Primer: "Pomazem kreativcima da izgrade autoritet kroz autentican storytelling i strategiju licnog brenda."</div>
+                <div class="validation-error" id="superpowerError">&#x26A0;&#xFE0F; Ovo polje je obavezno</div>
+            </div>
+
+            <div class="question">
+                <label class="question-label">Brand Vizija - Opisite DETALJNO zeljeni vizuelni identitet:</label>
+                <textarea id="vision" placeholder="Boje koje asociraju na... Oblici koji evociraju... Materijali, teksture, osecaji..."></textarea>
+                <div class="placeholder-text">&#x1F4A1; TIP: Sto detaljnije opisete (boje, oblike, simbole, emocije), AI ce generisati precizniji identitet. Minimum 50 karaktera.</div>
+                <div class="validation-error" id="visionError">&#x26A0;&#xFE0F; Vizija je prekratka (min 50 karaktera)</div>
+            </div>
+
+            <div class="buttons">
+                <button class="btn-next" onclick="goToSection(2)">Sledece &#x2192;</button>
+            </div>
+        </div>
+
+        <!-- Section 2: Transformacija i Psihologija -->
+        <div class="section" id="section2">
+            <div class="section-title">&#x2728; Transformacija</div>
+            <div class="section-subtitle">Kakvu promenu donosite klijentima?</div>
+
+            <div class="question">
+                <label class="question-label">Glavni rezultat za klijenta:</label>
+                <div class="cards-grid">
+                    <div class="card" data-field="transformation" data-value="control">
+                        <div class="card-icon">&#x1F3AF;</div>
+                        <div class="card-title">Red i kontrola</div>
+                        <div class="card-desc">Od haosa &#x2192; sistem</div>
+                    </div>
+                    <div class="card" data-field="transformation" data-value="growth">
+                        <div class="card-icon">&#x1F4C8;</div>
+                        <div class="card-title">Rast i napredak</div>
+                        <div class="card-desc">Od proseka &#x2192; vrh</div>
+                    </div>
+                    <div class="card" data-field="transformation" data-value="security">
+                        <div class="card-icon">&#x1F6E1;&#xFE0F;</div>
+                        <div class="card-title">Sigurnost</div>
+                        <div class="card-desc">Od rizika &#x2192; stabilnost</div>
+                    </div>
+                    <div class="card" data-field="transformation" data-value="prestige">
+                        <div class="card-icon">&#x1F451;</div>
+                        <div class="card-title">Prestiz i autoritet</div>
+                        <div class="card-desc">Od nepoznatog &#x2192; lider</div>
+                    </div>
+                </div>
+                <div class="validation-error" id="transformationError">&#x26A0;&#xFE0F; Odaberite transformaciju</div>
+            </div>
+
+            <div class="question">
+                <label class="question-label">Kako zelite da se klijent oseca nakon interakcije:</label>
+                <div class="cards-grid">
+                    <div class="card" data-field="feeling" data-value="relieved">
+                        <div class="card-icon">&#x1F60C;</div>
+                        <div class="card-title">Olaksano</div>
+                        <div class="card-desc">Teret skinut</div>
+                    </div>
+                    <div class="card" data-field="feeling" data-value="powerful">
+                        <div class="card-icon">&#x1F4AA;</div>
+                        <div class="card-title">Mocno</div>
+                        <div class="card-desc">Spreman za akciju</div>
+                    </div>
+                    <div class="card" data-field="feeling" data-value="smart">
+                        <div class="card-icon">&#x1F9E0;</div>
+                        <div class="card-title">Pametno</div>
+                        <div class="card-desc">Naucio vrednost</div>
+                    </div>
+                    <div class="card" data-field="feeling" data-value="special">
+                        <div class="card-icon">&#x2B50;</div>
+                        <div class="card-title">Posebno</div>
+                        <div class="card-desc">VIP tretman</div>
+                    </div>
+                </div>
+                <div class="validation-error" id="feelingError">&#x26A0;&#xFE0F; Odaberite zeljeno osecanje</div>
+            </div>
+
+            <div class="buttons">
+                <button class="btn-prev" onclick="goToSection(1)">&#x2190; Nazad</button>
+                <button class="btn-next" onclick="goToSection(3)">Sledece &#x2192;</button>
+            </div>
+        </div>
+
+        <!-- Section 3: Karakter -->
+        <div class="section" id="section3">
+            <div class="section-title">&#x1F3AD; Karakter Brenda</div>
+            <div class="section-subtitle">Ako bi vas brend bio osoba, kakva bi bila? (Izaberite 1 od 12 arhetipova)</div>
+
+            <div class="question">
+                <label class="question-label">Brand Arhetip:</label>
+                <div class="cards-grid">
+                    <div class="card" data-field="archetype" data-value="innocent">
+                        <div class="card-icon">&#x1F31F;</div>
+                        <div class="card-title">Innocent</div>
+                        <div class="card-desc">Optimistican, posten</div>
+                    </div>
+                    <div class="card" data-field="archetype" data-value="everyman">
+                        <div class="card-icon">&#x1F64B;</div>
+                        <div class="card-title">Everyman</div>
+                        <div class="card-desc">Pristupacan, iskren</div>
+                    </div>
+                    <div class="card" data-field="archetype" data-value="hero">
+                        <div class="card-icon">&#x1F9B8;</div>
+                        <div class="card-title">Hero</div>
+                        <div class="card-desc">Hrabar, ambiciozan</div>
+                    </div>
+                    <div class="card" data-field="archetype" data-value="outlaw">
+                        <div class="card-icon">&#x26A1;</div>
+                        <div class="card-title">Outlaw</div>
+                        <div class="card-desc">Buntovan, disruptivan</div>
+                    </div>
+                    <div class="card" data-field="archetype" data-value="explorer">
+                        <div class="card-icon">&#x1F9ED;</div>
+                        <div class="card-title">Explorer</div>
+                        <div class="card-desc">Avanturista, slobodan</div>
+                    </div>
+                    <div class="card" data-field="archetype" data-value="creator">
+                        <div class="card-icon">&#x1F3A8;</div>
+                        <div class="card-title">Creator</div>
+                        <div class="card-desc">Originalan, umetnik</div>
+                    </div>
+                    <div class="card" data-field="archetype" data-value="ruler">
+                        <div class="card-icon">&#x1F451;</div>
+                        <div class="card-title">Ruler</div>
+                        <div class="card-desc">Autoritativan, kontrolise</div>
+                    </div>
+                    <div class="card" data-field="archetype" data-value="magician">
+                        <div class="card-icon">&#x2728;</div>
+                        <div class="card-title">Magician</div>
+                        <div class="card-desc">Vizionar, transformise</div>
+                    </div>
+                    <div class="card" data-field="archetype" data-value="lover">
+                        <div class="card-icon">&#x2764;&#xFE0F;</div>
+                        <div class="card-title">Lover</div>
+                        <div class="card-desc">Strastan, intiman</div>
+                    </div>
+                    <div class="card" data-field="archetype" data-value="caregiver">
+                        <div class="card-icon">&#x1F917;</div>
+                        <div class="card-title">Caregiver</div>
+                        <div class="card-desc">Brizan, pouzdan</div>
+                    </div>
+                    <div class="card" data-field="archetype" data-value="sage">
+                        <div class="card-icon">&#x1F9D9;</div>
+                        <div class="card-title">Sage</div>
+                        <div class="card-desc">Mudar, edukator</div>
+                    </div>
+                    <div class="card" data-field="archetype" data-value="jester">
+                        <div class="card-icon">&#x1F921;</div>
+                        <div class="card-title">Jester</div>
+                        <div class="card-desc">Zabavan, bezbrizan</div>
+                    </div>
+                </div>
+                <div class="validation-error" id="archetypeError">&#x26A0;&#xFE0F; Odaberite arhetip</div>
+            </div>
+
+            <div class="buttons">
+                <button class="btn-prev" onclick="goToSection(2)">&#x2190; Nazad</button>
+                <button class="btn-next" onclick="goToSection(4)">Sledece &#x2192;</button>
+            </div>
+        </div>
+
+        <!-- Section 4: Publika i Diferencijacija -->
+        <div class="section" id="section4">
+            <div class="section-title">&#x1F3AF; Publika & Pozicioniranje</div>
+            <div class="section-subtitle">Za koga radite i sto vas cini jedinstvenim?</div>
+
+            <div class="question">
+                <label class="question-label">Primarna ciljna publika:</label>
+                <div class="cards-grid">
+                    <div class="card" data-field="audience" data-value="genz">
+                        <div class="card-icon">&#x1F4F1;</div>
+                        <div class="card-title">Digitalni Domoroci</div>
+                        <div class="card-desc">Gen Z, Millennials</div>
+                    </div>
+                    <div class="card" data-field="audience" data-value="professional">
+                        <div class="card-icon">&#x1F4BC;</div>
+                        <div class="card-title">Profesionalci</div>
+                        <div class="card-desc">B2B, Korporacije</div>
+                    </div>
+                    <div class="card" data-field="audience" data-value="luxury">
+                        <div class="card-icon">&#x1F48E;</div>
+                        <div class="card-title">Premium Segment</div>
+                        <div class="card-desc">Visoka kupovna moc</div>
+                    </div>
+                    <div class="card" data-field="audience" data-value="family">
+                        <div class="card-icon">&#x1F468;&#x200D;&#x1F469;&#x200D;&#x1F467;</div>
+                        <div class="card-title">Porodice</div>
+                        <div class="card-desc">Roditelji, bezbednost</div>
+                    </div>
+                </div>
+                <div class="validation-error" id="audienceError">&#x26A0;&#xFE0F; Odaberite primarnu publiku</div>
+            </div>
+
+            <div class="question">
+                <label class="question-label">Vasa glavna konkurentska prednost:</label>
+                <div class="cards-grid">
+                    <div class="card" data-field="advantage" data-value="innovation">
+                        <div class="card-icon">&#x1F680;</div>
+                        <div class="card-title">Inovacija</div>
+                        <div class="card-desc">Prvi na trzistu</div>
+                    </div>
+                    <div class="card" data-field="advantage" data-value="premium">
+                        <div class="card-icon">&#x1F451;</div>
+                        <div class="card-title">Premium Kvalitet</div>
+                        <div class="card-desc">Luksuz, ekskluzivnost</div>
+                    </div>
+                    <div class="card" data-field="advantage" data-value="affordability">
+                        <div class="card-icon">&#x1F4B0;</div>
+                        <div class="card-title">Pristupacnost</div>
+                        <div class="card-desc">Best value</div>
+                    </div>
+                    <div class="card" data-field="advantage" data-value="expertise">
+                        <div class="card-icon">&#x1F393;</div>
+                        <div class="card-title">Ekspertiza</div>
+                        <div class="card-desc">Duboko znanje</div>
+                    </div>
+                </div>
+                <div class="validation-error" id="advantageError">&#x26A0;&#xFE0F; Odaberite prednost</div>
+            </div>
+
+            <div class="question">
+                <label class="question-label">Ton komunikacije:</label>
+                <div class="slider-container">
+                    <div class="slider-row">
+                        <div class="slider-label">
+                            <span>&#x1F917; Prijateljski</span>
+                            <span>&#x1F3A9; Autoritativan</span>
+                        </div>
+                        <input type="range" id="toneSlider" min="1" max="5" value="3" oninput="updateSliderValue('tone', this.value)">
+                        <span class="slider-value" id="toneValue">Balansiran ton (3/5)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button class="btn-prev" onclick="goToSection(3)">&#x2190; Nazad</button>
+                <button class="btn-next" onclick="goToSection(5)">Sledece &#x2192;</button>
+            </div>
+        </div>
+
+        <!-- Section 5: Materijal -->
+        <div class="section" id="section5">
+            <div class="section-title">&#x1F3A8; Senzorno Sidro</div>
+            <div class="section-subtitle">Koji materijal najbolje reprezentuje energiju vaseg brenda?</div>
+
+            <div class="question">
+                <label class="question-label">Materijal identiteta:</label>
+                <div class="cards-grid">
+                    <div class="card" data-field="material" data-value="concrete">
+                        <div class="card-icon">&#x1F3D7;&#xFE0F;</div>
+                        <div class="card-title">Polirani Beton</div>
+                        <div class="card-desc">Snaga, stabilnost</div>
+                    </div>
+                    <div class="card" data-field="material" data-value="linen">
+                        <div class="card-icon">&#x1F33E;</div>
+                        <div class="card-title">Meki Lan</div>
+                        <div class="card-desc">Prirodno, toplo</div>
+                    </div>
+                    <div class="card" data-field="material" data-value="steel">
+                        <div class="card-icon">&#x2699;&#xFE0F;</div>
+                        <div class="card-title">Bruseni Celik</div>
+                        <div class="card-desc">Preciznost, tech</div>
+                    </div>
+                    <div class="card" data-field="material" data-value="glass">
+                        <div class="card-icon">&#x1F48E;</div>
+                        <div class="card-title">Mat Staklo</div>
+                        <div class="card-desc">Transparentnost, elegancija</div>
+                    </div>
+                    <div class="card" data-field="material" data-value="wood">
+                        <div class="card-icon">&#x1FAB5;</div>
+                        <div class="card-title">Prirodno Drvo</div>
+                        <div class="card-desc">Toplina, autenticnost</div>
+                    </div>
+                    <div class="card" data-field="material" data-value="marble">
+                        <div class="card-icon">&#x2B1C;</div>
+                        <div class="card-title">Mermerni Kamen</div>
+                        <div class="card-desc">Luksuz, trajnost</div>
+                    </div>
+                </div>
+                <div class="validation-error" id="materialError">&#x26A0;&#xFE0F; Odaberite materijal</div>
+            </div>
+
+            <div class="buttons">
+                <button class="btn-prev" onclick="goToSection(4)">&#x2190; Nazad</button>
+                <button class="btn-next" onclick="goToSection(6)">Sledece &#x2192;</button>
+            </div>
+        </div>
+
+        <!-- Section 6: Skaleri -->
+        <div class="section" id="section6">
+            <div class="section-title">&#x2696;&#xFE0F; Fino Podesavanje</div>
+            <div class="section-subtitle">Definisi vizuelni karakter kroz skalere (1 = Levo, 5 = Desno)</div>
+
+            <div class="question">
+                <label class="question-label">Dizajn Parametri:</label>
+                <div class="slider-container">
+                    <div class="slider-row">
+                        <div class="slider-label">
+                            <span>&#x1F3DB;&#xFE0F; Tradicionalno</span>
+                            <span>&#x1F680; Inovativno</span>
+                        </div>
+                        <input type="range" id="styleSlider" min="1" max="5" value="3" oninput="updateSliderValue('style', this.value)">
+                        <span class="slider-value" id="styleValue">Balansiran stil (3/5)</span>
+                    </div>
+
+                    <div class="slider-row">
+                        <div class="slider-label">
+                            <span>&#x1F91D; Pristupacno</span>
+                            <span>&#x1F48E; Ekskluzivno</span>
+                        </div>
+                        <input type="range" id="approachSlider" min="1" max="5" value="3" oninput="updateSliderValue('approach', this.value)">
+                        <span class="slider-value" id="approachValue">Profesionalan pristup (3/5)</span>
+                    </div>
+
+                    <div class="slider-row">
+                        <div class="slider-label">
+                            <span>&#x2B55; Meko (Oblo)</span>
+                            <span>&#x2B1B; Ostro (Geometrija)</span>
+                        </div>
+                        <input type="range" id="designSlider" min="1" max="5" value="3" oninput="updateSliderValue('design', this.value)">
+                        <span class="slider-value" id="designValue">Kombinirani oblici (3/5)</span>
+                    </div>
+
+                    <div class="slider-row">
+                        <div class="slider-label">
+                            <span>&#x1F54A;&#xFE0F; Mirno</span>
+                            <span>&#x26A1; Energicno</span>
+                        </div>
+                        <input type="range" id="dynamicSlider" min="1" max="5" value="3" oninput="updateSliderValue('dynamic', this.value)">
+                        <span class="slider-value" id="dynamicValue">Umerena energija (3/5)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button class="btn-prev" onclick="goToSection(5)">&#x2190; Nazad</button>
+                <button class="btn-next" onclick="generateBrand()">&#x1F916; AI Generisi Brend Identitet</button>
+            </div>
+        </div>
+
+        <!-- Brand Page -->
+        <div class="brand-page" id="brandPage">
+            <div id="brandContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const formData = {};
+        let currentSection = 1;
+        const totalSections = 6;
+
+        const brandTranslator = {
+            getStyle: (v) => {
+                const levels = {
+                    1: "Ultra-tradicionalan, heritage dizajn - kao stoletnа institucija, fokus na klasiku i vremenski trajne elemente",
+                    2: "Tradicionalan sa modernim akcentima - poštuje nasleđe ali ne izgleda zastarelo",
+                    3: "Balansiran savremeni dizajn - kombinuje moderne elemente sa prepoznatljivošću, profesionalan",
+                    4: "Moderan i inovativan - cutting-edge trendovi, fokus na sveže i novo",
+                    5: "Ultra-disruptivan, futuristički dizajn - eksperimentalan, prvo na tržištu, provocira norme"
+                };
+                return levels[v] || levels[3];
+            },
+
+            getApproach: (v) => {
+                const levels = {
+                    1: "Masovno pristupačan - 'za sve ljude', demokratski, inkluzivan, affordable vibe",
+                    2: "Demokratski ali kvalitetan - pristupačan većini, value for money positioning",
+                    3: "Profesionalan mid-tier - stručan, pouzdan, ni masovno ni elitno, B2B friendly",
+                    4: "Premium selektivan - viši segment, ekskluzivniji pristup, limited availability",
+                    5: "Ultra-ekskluzivan, elitni luksuz - samo za izabrane, invitation-only vibe, vrhunska cena"
+                };
+                return levels[v] || levels[3];
+            },
+
+            getGeometry: (v) => {
+                const levels = {
+                    1: "Potpuno organski - meke linije, prirodni oblici, rounded sve, biofilia, fluid shapes, border-radius: 32px+",
+                    2: "Uglavnom meko - zaobljeni oblici dominiraju, retko pravo, empatija i toplina, border-radius: 20-24px",
+                    3: "Mixed geometry - balans zaobljenih i pravih, profesionalan ali human, border-radius: 12-16px",
+                    4: "Uglavnom geometrijsko - čiste linije, struktura dominira, malo zaobljenih elemenata, border-radius: 6-8px",
+                    5: "Brutalist sharp - isključivo oštre ivice, minimalni radius, precizni uglovi, border-radius: 0-4px max"
+                };
+                return levels[v] || levels[3];
+            },
+
+            getEnergy: (v) => {
+                const levels = {
+                    1: "Zen mirnoća - maksimalan whitespace (48px+ spacing), slow transitions (800ms+), soft shadows, meditativno",
+                    2: "Opuštena energija - dosta prostora (32px spacing), smooth transitions (500ms), difuzne senke",
+                    3: "Umerena profesionalna dinamika - balansiran spacing (24px), standard transitions (300ms), definirane senke",
+                    4: "Visoka energija - kompaktan spacing (16px), brze transitions (200ms), hard shadows, motion oriented",
+                    5: "Ekstreman tempo - minimalan spacing (8-12px), instant transitions (100ms), sharp shadows, constant motion"
+                };
+                return levels[v] || levels[3];
+            },
+
+            getTone: (v) => {
+                const levels = {
+                    1: "Ultra-prijateljski casual - kao razgovor sa najboljim drugom, sleng ok, emotikoni, 'hej brate'",
+                    2: "Prijateljski ali profesionalan - topao pristup, bez preteranog formalizma, 'ti' forma",
+                    3: "Balansiran poslovni ton - ni previše toplo ni hladno, 'vi' forma, profesionalan ali ne krut",
+                    4: "Formalan stručnjački - distanca, autoritet, akademski pristup, strictly business",
+                    5: "Ultra-autoritativan commanding - komanduje pažnjom, minimum emocije, absolute authority, 'mi dictiramo'"
+                };
+                return levels[v] || levels[3];
+            },
+
+            getAudience: (a) => ({
+                'genz': 'Digitalni domoroci (Gen Z, Millennials) - cene autentičnost, brzinu, vizuelnu komunikaciju, društveni uticaj',
+                'professional': 'Poslovni profesionalci - cene efikasnost, ROI, dokaze, konkretne rezultate',
+                'luxury': 'Klijenti visoke platežne moći - cene ekskluzivnost, status, personalizaciju',
+                'family': 'Porodice i roditelji - cene sigurnost, poverenje, stabilnost, dugoročnost'
+            }[a] || 'Široka publika - različite demografske grupe'),
+
+            getTransformation: (t) => ({
+                'control': 'Od haosa i konfuzije → ka redu, organizaciji i kontroli nad situacijom',
+                'growth': 'Od prosečnosti i stagnacije → ka napretku, rastu i vrhunskim rezultatima',
+                'security': 'Od nesigurnosti i rizika → ka stabilnosti, sigurnosti i predvidivosti',
+                'prestige': 'Od anonimnosti i nevidljivosti → ka autoritetu, ugledu i liderstvu'
+            }[t] || 'Pozitivna promena'),
+
+            getFeeling: (f) => ({
+                'relieved': 'olakšano, oslobođeno tereta, mirno - kao da je problem rešen',
+                'powerful': 'moćno, spremno za akciju, samopouzdano - kao da može sve postići',
+                'smart': 'pametno, obrazovano, kompetentno - kao da je naučio vrednu tajnu',
+                'special': 'posebno, vredno pažnje, VIP - kao da pripada eliti'
+            }[f] || 'pozitivno'),
+
+            getAdvantage: (a) => ({
+                'innovation': 'Prvi na tržištu, pionir, cutting-edge tehnologija',
+                'premium': 'Vrhunski kvalitet, luksuz, ekskluzivnost',
+                'affordability': 'Najbolji odnos cene i vrednosti, dostupnost za sve',
+                'expertise': 'Dubinsko stručno znanje, godine iskustva, specijalizacija'
+            }[a] || 'Kvalitet'),
+
+            getIndustry: (c) => ({
+                'tech': 'Tehnološka industrija - SaaS, IT usluge, digitalni proizvodi, startapi',
+                'consulting': 'Konsalting i edukacija - coaching, obuke, kursevi, mentorstvo',
+                'products': 'E-commerce i fizički proizvodi - lifestyle, moda, potrošačka dobra',
+                'services': 'Profesionalne usluge - B2B, agencije, zanatstvo, trgovina'
+            }[c] || 'Opšta delatnost')
+        };
+
+        document.addEventListener('click', (e) => {
+            const card = e.target.closest('.card');
+            if (!card) return;
+
+            const field = card.dataset.field;
+            const value = card.dataset.value;
+
+            if (field && value) {
+                document.querySelectorAll(`.card[data-field="${field}"]`).forEach(c => {
+                    c.classList.remove('selected');
+                });
+                card.classList.add('selected');
+                formData[field] = value;
+
+                const errorId = field + 'Error';
+                const errorEl = document.getElementById(errorId);
+                if (errorEl) {
+                    errorEl.classList.remove('show');
+                }
+            }
+        });
+
+        function updateSliderValue(type, value) {
+            const descriptions = {
+                tone: ['Prijateljski (1)', 'Opušteno-prof. (2)', 'Balansiran (3)', 'Profesionalan (4)', 'Autoritativan (5)'],
+                style: ['Tradicionalno (1)', 'Klasično (2)', 'Balansiran (3)', 'Moderno (4)', 'Inovativno (5)'],
+                approach: ['Pristupačno (1)', 'Demokratski (2)', 'Profesionalan (3)', 'Selektivno (4)', 'Ekskluzivno (5)'],
+                design: ['Vrlo meko (1)', 'Meko (2)', 'Kombinovano (3)', 'Geometrijsko (4)', 'Vrlo oštro (5)'],
+                dynamic: ['Vrlo mirno (1)', 'Mirno (2)', 'Umereno (3)', 'Energično (4)', 'Vrlo energično (5)']
+            };
+
+            const valueEl = document.getElementById(type + 'Value');
+            if (valueEl && descriptions[type]) {
+                valueEl.textContent = descriptions[type][value - 1];
+            }
+        }
+
+        function validateSection(sectionNum) {
+            let isValid = true;
+
+            if (sectionNum === 1) {
+                const brandName = document.getElementById('brandName').value.trim();
+                if (!brandName) {
+                    document.getElementById('brandNameError').classList.add('show');
+                    isValid = false;
+                } else {
+                    document.getElementById('brandNameError').classList.remove('show');
+                }
+
+                if (!formData.category) {
+                    document.getElementById('categoryError').classList.add('show');
+                    isValid = false;
+                } else {
+                    document.getElementById('categoryError').classList.remove('show');
+                }
+
+                const superpower = document.getElementById('superpower').value.trim();
+                if (!superpower || superpower.length < 10) {
+                    document.getElementById('superpowerError').classList.add('show');
+                    isValid = false;
+                } else {
+                    document.getElementById('superpowerError').classList.remove('show');
+                }
+
+                const vision = document.getElementById('vision').value.trim();
+                if (!vision || vision.length < 50) {
+                    document.getElementById('visionError').classList.add('show');
+                    isValid = false;
+                } else {
+                    document.getElementById('visionError').classList.remove('show');
+                }
+            }
+
+            if (sectionNum === 2) {
+                if (!formData.transformation) {
+                    document.getElementById('transformationError').classList.add('show');
+                    isValid = false;
+                } else {
+                    document.getElementById('transformationError').classList.remove('show');
+                }
+
+                if (!formData.feeling) {
+                    document.getElementById('feelingError').classList.add('show');
+                    isValid = false;
+                } else {
+                    document.getElementById('feelingError').classList.remove('show');
+                }
+            }
+
+            if (sectionNum === 3) {
+                if (!formData.archetype) {
+                    document.getElementById('archetypeError').classList.add('show');
+                    isValid = false;
+                } else {
+                    document.getElementById('archetypeError').classList.remove('show');
+                }
+            }
+
+            if (sectionNum === 4) {
+                if (!formData.audience) {
+                    document.getElementById('audienceError').classList.add('show');
+                    isValid = false;
+                } else {
+                    document.getElementById('audienceError').classList.remove('show');
+                }
+
+                if (!formData.advantage) {
+                    document.getElementById('advantageError').classList.add('show');
+                    isValid = false;
+                } else {
+                    document.getElementById('advantageError').classList.remove('show');
+                }
+            }
+
+            if (sectionNum === 5) {
+                if (!formData.material) {
+                    document.getElementById('materialError').classList.add('show');
+                    isValid = false;
+                } else {
+                    document.getElementById('materialError').classList.remove('show');
+                }
+            }
+
+            return isValid;
+        }
+
+        function goToSection(sectionNum) {
+            if (sectionNum > currentSection && !validateSection(currentSection)) {
+                return;
+            }
+
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            const section = document.getElementById(`section${sectionNum}`);
+            if (section) {
+                section.classList.add('active');
+                currentSection = sectionNum;
+
+                const progress = (sectionNum / totalSections) * 100;
+                document.getElementById('progressFill').style.width = progress + '%';
+
+                window.scrollTo(0, 0);
+            }
+        }
+
+        async function generateBrand() {
+            if (!validateSection(6)) {
+                alert('Molimo popunite sva obavezna polja.');
+                return;
+            }
+
+            formData.brandName = document.getElementById('brandName').value.trim();
+            formData.superpower = document.getElementById('superpower').value.trim();
+            formData.vision = document.getElementById('vision').value.trim();
+            formData.styleSlider = parseInt(document.getElementById('styleSlider').value);
+            formData.approachSlider = parseInt(document.getElementById('approachSlider').value);
+            formData.designSlider = parseInt(document.getElementById('designSlider').value);
+            formData.dynamicSlider = parseInt(document.getElementById('dynamicSlider').value);
+            formData.toneSlider = parseInt(document.getElementById('toneSlider').value);
+
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('brandPage').classList.add('active');
+            document.getElementById('brandContent').innerHTML = `
+                <div class="loading-state">
+                    <div class="loading-spinner">&#x1F916;</div>
+                    <div class="loading-text">AI analizira vašu brand strategiju...</div>
+                    <div class="loading-sub">
+                        <strong>Wheeler-ova Arhitektura Brand Identiteta</strong><br><br>
+                        AI trenutno:<br>
+                        &bull; Analizira transformaciju klijenta i psihološki profil<br>
+                        &bull; Prevodi strategiju u vizuelne direktive (OBLIK &rarr; BOJA)<br>
+                        &bull; Generiše 5-delnu color arhitekturu sa WCAG validacijom<br>
+                        &bull; Definiše tipografsku hijerarhiju i UI specifikacije<br>
+                        &bull; Kreira Midjourney prompt za brandbook showcase<br><br>
+                        <em>Proces može trajati 20-40 sekundi...</em>
+                    </div>
+                </div>
+            `;
+
+            try {
+                const brandSystem = await callAI();
+                renderBrandPage(brandSystem);
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        async function callAI() {
+            const fullContext = {
+                name: formData.brandName,
+                industry: brandTranslator.getIndustry(formData.category),
+                mission: formData.superpower,
+                vision: formData.vision,
+                transformation: brandTranslator.getTransformation(formData.transformation),
+                feeling: brandTranslator.getFeeling(formData.feeling),
+                archetype: formData.archetype,
+                material: formData.material,
+                advantage: brandTranslator.getAdvantage(formData.advantage),
+                audience: brandTranslator.getAudience(formData.audience),
+                styleDesc: brandTranslator.getStyle(formData.styleSlider),
+                approachDesc: brandTranslator.getApproach(formData.approachSlider),
+                geometryDesc: brandTranslator.getGeometry(formData.designSlider),
+                energyDesc: brandTranslator.getEnergy(formData.dynamicSlider),
+                toneDesc: brandTranslator.getTone(formData.toneSlider)
+            };
+
+            const prompt = `Ti si Senior Brand Director sa 15+ godina iskustva. Kreiraj Visual Identity Blueprint prateći Wheeler-ov proces - PRVO OBLIK, ZATIM BOJA.
+
+═══════════════════════════════════════════════════════════
+STRATEŠKI FUNDAMENT (Wheeler Faza 1-2)
+═══════════════════════════════════════════════════════════
+
+OSNOVNI IDENTITET:
+• Brend: ${fullContext.name}
+• Industrija: ${fullContext.industry}
+• Misija: ${fullContext.mission}
+
+CILJNA PUBLIKA:
+${fullContext.audience}
+
+EMOCIONALNA TRANSFORMACIJA:
+Klijent prolazi kroz: ${fullContext.transformation}
+Osećaj nakon interakcije: ${fullContext.feeling}
+
+BRAND KARAKTER:
+• Arhetip: ${fullContext.archetype}
+• Ton komunikacije: ${fullContext.toneDesc}
+• Konkurentska prednost: ${fullContext.advantage}
+
+VIZIJA KLIJENTA (Primarne instrukcije):
+${fullContext.vision}
+
+═══════════════════════════════════════════════════════════
+DIZAJN LOGIKA (Wheeler Faza 3 - REDOSLED: OBLIK → BOJA)
+═══════════════════════════════════════════════════════════
+
+1. OBLIK (Primarni identifikator):
+   ${fullContext.geometryDesc}
+
+2. MATERIJALNOST (Senzorno sidro):
+   ${fullContext.material} - Kako ovaj materijal definiše teksturu, težinu i taktilnost?
+
+3. STIL (Vremenski kontekst):
+   ${fullContext.styleDesc}
+
+4. PRISTUP (Socijalni positioning):
+   ${fullContext.approachDesc}
+
+5. DINAMIKA (Energetski ritam):
+   ${fullContext.energyDesc}
+
+═══════════════════════════════════════════════════════════
+ZADATAK: GENERISATI KOMPLETAN BRAND SYSTEM
+═══════════════════════════════════════════════════════════
+
+Izradi JSON sa sledećom strukturom (ISKLJUČIVO JSON, bez markdown):
+
+{
+  "uniquenessStatement": "Mi smo jedini [industrija] koji [konkurentska prednost] za [target publika].",
+
+  "brandEssence": "Srž brenda u 5-7 reči - destilacija celog identiteta",
+
+  "colorSystem": {
+    "identity": "#HEX",
+    "support": "#HEX",
+    "action": "#HEX",
+    "light": "#HEX",
+    "dark": "#HEX",
+    "reasoning": "Detaljno objašnjenje (3-4 rečenice): Kako boje podržavaju emocionalnu transformaciju (${fullContext.transformation}), arhetip (${fullContext.archetype}), i materijalnost (${fullContext.material})."
+  },
+
+  "usageMatrix": {
+    "identity": "Stroga pravila upotrebe IDENTITY boje - konkretni primeri (navigacija, hero section, primarni naslovi...)",
+    "support": "Stroga pravila upotrebe SUPPORT boje - konkretni primeri (cards, testimonijali, sekundarne sekcije...)",
+    "action": "KRITIČNO: Action boja se koristi ISKLJUČIVO za CTA dugmad i konverzione elemente. Zabranjena je za dekoraciju.",
+    "typography": "Precizna hijerarhija sa veličinama: Hero (px/weight), H1 (px/weight), H2 (px/weight), Body (px/weight), Caption (px/weight)"
+  },
+
+  "typography": {
+    "headline": "Google Font naziv za naslove - MORA biti pravi Google Font",
+    "body": "Google Font naziv za body tekst - MORA biti pravi Google Font",
+    "usage": "Detaljno: Hero veličina i težina, H1, H2, H3, Body, Caption - sa konkretnim px i weight vrednostima"
+  },
+
+  "uiSpecs": {
+    "borderRadius": "TAČNA CSS vrednost u px na osnovu geometryDesc - npr. '32px' za organic, '4px' za sharp",
+    "shadowStyle": "TAČAN CSS box-shadow na osnovu energyDesc - npr. '0 8px 24px rgba(0,0,0,0.08)' za mirno, '0 4px 12px rgba(0,0,0,0.15)' za energično",
+    "spacingUnits": "TAČNA base spacing jedinica - npr. '48px' za zen mirnoću, '16px' za high energy",
+    "description": "Kako UI elementi izgledaju na ${fullContext.material} materijalu - konkretna vizualizacija (2-3 rečenice)"
+  },
+
+  "guidelines": {
+    "dos": [
+      "Pravilo 1 - Konkretna instrukcija šta UVEK činiti",
+      "Pravilo 2 - Konkretna instrukcija",
+      "Pravilo 3 - Konkretna instrukcija"
+    ],
+    "donts": [
+      "Zabrana 1 - Konkretna instrukcija šta NIKADA ne činiti",
+      "Zabrana 2 - Konkretna instrukcija",
+      "Zabrana 3 - Konkretna instrukcija"
+    ],
+    "always": [
+      "Zlatno pravilo koje nikad ne smeš prekršiti - NAJVAŽNIJI princip brenda"
+    ]
+  },
+
+  "logoConceptPrompt": "Professional logo presentation mockup, 4 variations displayed on premium white background: [1] Pictorial mark - symbolic icon only, [2] Minimalist wordmark - typography-focused, [3] Combination lockup - icon + text integrated, [4] Favicon - simplified for small sizes. Design inspired by ${fullContext.archetype} archetype, geometry: ${fullContext.geometryDesc}, primary colors: [insert ${fullContext.name}'s Identity color ${fullContext.vision}]. Studio photography lighting, ultra high quality branding sheet, portfolio worthy presentation, --ar 16:9 --style raw --v 6.1 --q 2"
+}
+
+KRITIČNA PRAVILA:
+1. PRVO analiziraj OBLIK (geometryDesc), ZATIM izvedi BOJU iz oblika i materijala
+2. Action boja MORA imati kontrast ratio >7:1 sa light bojom (WCAG AAA)
+3. Sve boje moraju resonovati sa "${fullContext.feeling}" osećanjem
+4. Svi Google Font nazivi moraju biti TAČNI i postojati
+5. UI specifikacije moraju biti KONKRETNE CSS vrednosti koje direktno odgovaraju nivoima slajdera
+6. Logo prompt mora biti completan i renderljiv sa konkretnim bojama`;
+
+            const response = await fetch("https://api.anthropic.com/v1/messages", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    model: "claude-sonnet-4-20250514",
+                    max_tokens: 8000,
+                    messages: [{
+                        role: "user",
+                        content: prompt
+                    }]
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`API greška: ${response.status} - ${errorData.error?.message || 'Nepoznata greška'}`);
+            }
+
+            const data = await response.json();
+            const text = data.content.find(b => b.type === "text")?.text || "";
+
+            let cleanText = text.trim();
+            cleanText = cleanText.replace(/```json/gi, '').replace(/```/g, '').trim();
+
+            const firstBrace = cleanText.indexOf('{');
+            const lastBrace = cleanText.lastIndexOf('}');
+            if (firstBrace !== -1 && lastBrace !== -1) {
+                cleanText = cleanText.substring(firstBrace, lastBrace + 1);
+            }
+
+            return JSON.parse(cleanText);
+        }
+
+        function calculateContrast(hex1, hex2) {
+            const getLuminance = (hex) => {
+                const rgb = parseInt(hex.slice(1), 16);
+                const r = (rgb >> 16) & 0xff;
+                const g = (rgb >> 8) & 0xff;
+                const b = (rgb >> 0) & 0xff;
+                const [rs, gs, bs] = [r, g, b].map(c => {
+                    c = c / 255;
+                    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+                });
+                return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+            };
+            const l1 = getLuminance(hex1);
+            const l2 = getLuminance(hex2);
+            const lighter = Math.max(l1, l2);
+            const darker = Math.min(l1, l2);
+            return (lighter + 0.05) / (darker + 0.05);
+        }
+
+        function renderBrandPage(system) {
+            const colors = system.colorSystem;
+            const contrastActionLight = calculateContrast(colors.action, colors.light);
+
+            // Store system in global variable for PDF generation
+            window.brandSystem = system;
+            window.brandFormData = formData;
+
+            // Show success message with prominent PDF button
+            const html = `
+                <div class="loading-state">
+                    <div style="font-size: 80px; margin-bottom: 20px;">&#x2705;</div>
+                    <div class="loading-text">Brend Identitet Uspešno Generisan!</div>
+                    <div class="loading-sub" style="margin: 30px auto; max-width: 500px;">
+                        Vaš kompletan Wheeler Brand Identity System je spreman.<br>
+                        <strong>${formData.brandName}</strong> sada ima profesionalni vizuelni identitet.
+                    </div>
+                    <button onclick="generateAndPrintPDF()" style="
+                        padding: 30px 60px;
+                        font-size: 24px;
+                        font-weight: 700;
+                        background: linear-gradient(135deg, #DC2626, #B91C1C);
+                        color: white;
+                        border: none;
+                        border-radius: 16px;
+                        cursor: pointer;
+                        margin-top: 40px;
+                        box-shadow: 0 20px 60px rgba(220, 38, 38, 0.4);
+                        transition: all 0.3s;
+                    " onmouseover="this.style.transform='translateY(-4px) scale(1.02)'" onmouseout="this.style.transform='translateY(0) scale(1)'">
+                        &#x1F4C4; PREUZMI FINALNI BRANDBOOK (PDF)
+                    </button>
+                    <p style="color: #999; margin-top: 25px; font-size: 14px; font-style: italic;">
+                        Klikni dugme za PDF download &rarr; Odaberi "Save as PDF" &rarr; Sačuvaj
+                    </p>
+                    <button onclick="location.reload()" style="
+                        margin-top: 50px;
+                        padding: 15px 40px;
+                        background: #f0f0f0;
+                        color: #333;
+                        border: none;
+                        border-radius: 10px;
+                        font-size: 16px;
+                        font-weight: 600;
+                        cursor: pointer;
+                    ">
+                        &#x1F504; Kreiraj Novi Brend
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('brandContent').innerHTML = html;
+
+            // Load fonts for PDF
+            const link = document.createElement('link');
+            link.href = `https://fonts.googleapis.com/css2?family=${system.typography.headline.replace(/ /g, '+')}:wght@400;600;700;900&family=${system.typography.body.replace(/ /g, '+')}:wght@400;500;600;700&display=swap`;
+            link.rel = 'stylesheet';
+            document.head.appendChild(link);
+
+            window.scrollTo(0, 0);
+        }
+
+        function generateAndPrintPDF() {
+            const system = window.brandSystem;
+            const formData = window.brandFormData;
+            const colors = system.colorSystem;
+
+            // Get border radius value
+            const borderRadius = system.uiSpecs.borderRadius.split(' ')[0];
+
+            // Create PDF content
+            const pdfHTML = `
+                <div id="pdfContent">
+                    <!-- HERO -->
+                    <div class="pdf-hero" style="background: ${colors.identity}; color: ${colors.light};">
+                        <div class="pdf-brand-name" style="font-family: '${system.typography.headline}', sans-serif;">
+                            ${formData.brandName}
+                        </div>
+                        <div class="pdf-onliness" style="font-family: '${system.typography.body}', sans-serif;">
+                            ${system.uniquenessStatement || formData.superpower}
+                        </div>
+                    </div>
+
+                    <!-- COLOR SYSTEM -->
+                    <div class="pdf-section" style="background: ${colors.light};">
+                        <h2 class="pdf-heading" style="color: ${colors.identity}; font-family: '${system.typography.headline}', sans-serif;">
+                            Wheeler Color System
+                        </h2>
+                        <div class="pdf-color-blocks">
+                            <div class="pdf-color-block" style="background: ${colors.identity}; color: ${colors.light}; border-radius: ${borderRadius};">
+                                <div class="pdf-color-label">IDENTITY</div>
+                                <div class="pdf-color-hex">${colors.identity}</div>
+                            </div>
+                            <div class="pdf-color-block" style="background: ${colors.support}; color: ${colors.light}; border-radius: ${borderRadius};">
+                                <div class="pdf-color-label">SUPPORT</div>
+                                <div class="pdf-color-hex">${colors.support}</div>
+                            </div>
+                            <div class="pdf-color-block" style="background: ${colors.action}; color: ${colors.dark}; border-radius: ${borderRadius};">
+                                <div class="pdf-color-label">ACTION</div>
+                                <div class="pdf-color-hex">${colors.action}</div>
+                            </div>
+                            <div class="pdf-color-block" style="background: ${colors.light}; color: ${colors.dark}; border: 3px solid ${colors.dark}; border-radius: ${borderRadius};">
+                                <div class="pdf-color-label">LIGHT</div>
+                                <div class="pdf-color-hex">${colors.light}</div>
+                            </div>
+                            <div class="pdf-color-block" style="background: ${colors.dark}; color: ${colors.light}; border-radius: ${borderRadius};">
+                                <div class="pdf-color-label">DARK</div>
+                                <div class="pdf-color-hex">${colors.dark}</div>
+                            </div>
+                        </div>
+                        <p style="font-family: '${system.typography.body}', sans-serif; font-size: 18px; line-height: 1.8; color: ${colors.dark}; opacity: 0.8;">
+                            ${colors.reasoning}
+                        </p>
+                    </div>
+
+                    <!-- TYPOGRAPHY -->
+                    <div class="pdf-section" style="background: ${colors.support}20;">
+                        <h2 class="pdf-heading" style="color: ${colors.identity}; font-family: '${system.typography.headline}', sans-serif;">
+                            Typography System
+                        </h2>
+                        <div class="pdf-typo-showcase">
+                            <div class="pdf-typo-sample">
+                                <div class="pdf-typo-label" style="color: ${colors.dark}; font-family: '${system.typography.body}', sans-serif;">HEADLINE FONT</div>
+                                <div class="pdf-typo-display" style="color: ${colors.identity}; font-family: '${system.typography.headline}', sans-serif;">
+                                    Aa Bb Cc Dd Ee
+                                </div>
+                                <div class="pdf-typo-name" style="color: ${colors.dark}; font-family: '${system.typography.body}', sans-serif;">
+                                    ${system.typography.headline}
+                                </div>
+                            </div>
+                            <div class="pdf-typo-sample">
+                                <div class="pdf-typo-label" style="color: ${colors.dark}; font-family: '${system.typography.body}', sans-serif;">BODY FONT</div>
+                                <div class="pdf-typo-display" style="color: ${colors.dark}; font-family: '${system.typography.body}', sans-serif;">
+                                    Aa Bb Cc Dd Ee
+                                </div>
+                                <div class="pdf-typo-name" style="color: ${colors.dark}; font-family: '${system.typography.body}', sans-serif;">
+                                    ${system.typography.body}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- UI COMPONENTS -->
+                    <div class="pdf-section" style="background: ${colors.light};">
+                        <h2 class="pdf-heading" style="color: ${colors.identity}; font-family: '${system.typography.headline}', sans-serif;">
+                            UI Components
+                        </h2>
+                        <div class="pdf-ui-grid">
+                            <div class="pdf-ui-card" style="background: white; border-radius: ${borderRadius};">
+                                <div class="pdf-ui-title" style="color: ${colors.identity}; font-family: '${system.typography.body}', sans-serif;">BUTTONS</div>
+                                <button class="pdf-button" style="background: ${colors.action}; color: ${colors.dark}; border-radius: ${borderRadius}; font-family: '${system.typography.body}', sans-serif;">
+                                    Primary CTA
+                                </button>
+                                <button class="pdf-button" style="background: transparent; color: ${colors.identity}; border: 2px solid ${colors.identity}; border-radius: ${borderRadius}; font-family: '${system.typography.body}', sans-serif;">
+                                    Secondary
+                                </button>
+                            </div>
+                            <div class="pdf-ui-card" style="background: white; border-radius: ${borderRadius};">
+                                <div class="pdf-ui-title" style="color: ${colors.identity}; font-family: '${system.typography.body}', sans-serif;">INPUTS</div>
+                                <input class="pdf-input" placeholder="Email address..." style="border-color: ${colors.support}; border-radius: ${borderRadius}; font-family: '${system.typography.body}', sans-serif; color: ${colors.dark};" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GUIDELINES -->
+                    <div class="pdf-section" style="background: ${colors.support}20;">
+                        <h2 class="pdf-heading" style="color: ${colors.identity}; font-family: '${system.typography.headline}', sans-serif;">
+                            Brand Guidelines
+                        </h2>
+                        <div class="pdf-guidelines-grid">
+                            ${system.guidelines.dos.map(text => `
+                                <div class="pdf-guideline" style="background: #ECFDF5; border-color: #10B981; border-radius: ${borderRadius};">
+                                    <span class="pdf-guideline-icon">&#x2705;</span>
+                                    <span class="pdf-guideline-text" style="font-family: '${system.typography.body}', sans-serif; color: #065F46;">
+                                        <strong>UVEK:</strong> ${text}
+                                    </span>
+                                </div>
+                            `).join('')}
+                            ${system.guidelines.donts.map(text => `
+                                <div class="pdf-guideline" style="background: #FEF2F2; border-color: #EF4444; border-radius: ${borderRadius};">
+                                    <span class="pdf-guideline-icon">&#x274C;</span>
+                                    <span class="pdf-guideline-text" style="font-family: '${system.typography.body}', sans-serif; color: #991B1B;">
+                                        <strong>NIKAD:</strong> ${text}
+                                    </span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- LOGO CONCEPT -->
+                    <div class="pdf-logo-section">
+                        <h2 class="pdf-heading" style="color: ${colors.identity}; font-family: '${system.typography.headline}', sans-serif;">
+                            Logo Concept Prompt
+                        </h2>
+                        <p style="font-family: '${system.typography.body}', sans-serif; font-size: 18px; color: ${colors.dark}; margin-bottom: 20px;">
+                            Koristite ovaj prompt u Midjourney-u za generisanje logo koncepata:
+                        </p>
+                        <div class="pdf-logo-prompt">
+${system.logoConceptPrompt}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Insert PDF content into body
+            const existingPDF = document.getElementById('pdfContent');
+            if (existingPDF) {
+                existingPDF.remove();
+            }
+            document.body.insertAdjacentHTML('beforeend', pdfHTML);
+
+            // Trigger print
+            setTimeout(() => {
+                window.print();
+            }, 500);
+        }
+
+        function showError(message) {
+            document.getElementById('brandContent').innerHTML = `
+                <div class="loading-state">
+                    <div style="font-size: 60px">&#x274C;</div>
+                    <div class="loading-text">Greška u generisanju</div>
+                    <p style="color: #666; margin-top: 20px; max-width: 600px;">${message}</p>
+                    <button class="btn-next" onclick="location.reload()" style="margin-top: 30px;">
+                        Pokušaj ponovo
+                    </button>
+                </div>
+            `;
+        }
+
+        goToSection(1);
+    </script>
+</body>
+</html>
