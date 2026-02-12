@@ -1285,7 +1285,16 @@
                 'consulting': 'Mentorstvo i edukacija — obuke, kursevi, stručno vođenje',
                 'products': 'Onlajn prodaja i proizvodi — stil života, moda, potrošačka dobra',
                 'services': 'Poslovne usluge — agencije, zanatstvo, saradnja sa firmama'
-            }[c] || 'Opšta delatnost')
+            }[c] || 'Opšta delatnost'),
+
+            getMaterial: (m) => ({
+                'concrete': 'Polirani beton — snaga, stabilnost, industrijski karakter, hladna glatkoća',
+                'linen': 'Meki lan — prirodna toplina, organsko, nežnost na dodir, prozračnost',
+                'steel': 'Brušeni čelik — preciznost, tehnološka hladnoća, refleksija svetlosti',
+                'glass': 'Mat staklo — transparentnost, elegancija, svetlost koja prolazi, čistoća',
+                'wood': 'Prirodno drvo — toplina, autentičnost, tekstura godova, prizemnost',
+                'marble': 'Mermerni kamen — luksuz, trajnost, hladna težina, prefinjenost'
+            }[m] || 'Neutralan materijal')
         };
 
         document.addEventListener('click', (e) => {
@@ -1493,7 +1502,7 @@
                 transformation: brandTranslator.getTransformation(formData.transformation),
                 feeling: brandTranslator.getFeeling(formData.feeling),
                 archetype: formData.archetype,
-                material: formData.material,
+                material: brandTranslator.getMaterial(formData.material),
                 advantage: brandTranslator.getAdvantage(formData.advantage),
                 audience: brandTranslator.getAudience(formData.audience),
                 styleDesc: brandTranslator.getStyle(formData.styleSlider),
@@ -1662,6 +1671,7 @@ PRAVILA:
             // Sanitize all values
             const safeName = sanitizeHTML(formData.brandName);
             const safeUniqueness = sanitizeHTML(system.uniquenessStatement || formData.superpower);
+            const safeEssence = sanitizeHTML(system.brandEssence || '');
             const safeReasoning = sanitizeHTML(colors.reasoning);
             const safeHeadline = sanitizeFontName(system.typography.headline);
             const safeBody = sanitizeFontName(system.typography.body);
@@ -1722,7 +1732,8 @@ PRAVILA:
                 <!-- HERO -->
                 <section class="brand-hero-section" style="background:${sc.identity};">
                     <div class="brand-hero-content">
-                        <h1 style="font-family:'${safeHeadline}',sans-serif;color:${sc.light};font-size:clamp(48px,8vw,96px);font-weight:900;letter-spacing:-3px;margin:0 0 24px;line-height:1;">${safeName}</h1>
+                        <h1 style="font-family:'${safeHeadline}',sans-serif;color:${sc.light};font-size:clamp(48px,8vw,96px);font-weight:900;letter-spacing:-3px;margin:0 0 16px;line-height:1;">${safeName}</h1>
+                        ${safeEssence ? `<p style="font-family:'${safeBody}',sans-serif;color:${sc.light};opacity:0.6;font-size:clamp(14px,1.5vw,18px);text-transform:uppercase;letter-spacing:3px;font-weight:600;margin:0 0 24px;">${safeEssence}</p>` : ''}
                         <p style="font-family:'${safeBody}',sans-serif;color:${sc.light};opacity:0.9;font-size:clamp(18px,2.5vw,28px);max-width:700px;line-height:1.5;margin:0 0 48px;">${safeUniqueness}</p>
                         <div>
                             <button style="background:${sc.action};color:${sc.dark};border:none;padding:18px 48px;border-radius:${br};font-family:'${safeBody}',sans-serif;font-weight:700;font-size:18px;cursor:pointer;margin-right:16px;">Započni</button>
@@ -1827,7 +1838,7 @@ PRAVILA:
             const contentClone = brandContent.cloneNode(true);
 
             // Remove sticky action bar from the download version
-            const actionBar = contentClone.querySelector('[style*="position: sticky"]');
+            const actionBar = contentClone.querySelector('.brand-action-bar');
             if (actionBar) actionBar.remove();
 
             // Collect all brand-related CSS rules from current stylesheet
