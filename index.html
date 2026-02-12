@@ -1181,6 +1181,16 @@
             setTimeout(() => { if (div.parentNode) div.remove(); }, 4000);
         }
 
+        function copyToClipboard(text, btn) {
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerHTML;
+                btn.innerHTML = '&#x2705; Kopirano!';
+                setTimeout(() => { btn.innerHTML = original; }, 2000);
+            }).catch(() => {
+                showNotification('Kopiranje nije uspelo. Selektujte tekst ručno.', 'error');
+            });
+        }
+
         const formData = {};
         let currentSection = 1;
         const totalSections = 6;
@@ -1514,7 +1524,7 @@
             };
 
             const prompt = `Ti si iskusan brend dizajner. Klijent ti je upravo ispričao sve o svom brendu — tvoj posao je da od toga napraviš vizuelni identitet koji ima smisla. Radi po Wheeler-ovom procesu: PRVO oblik, PA ONDA boja.
-SVE piši na SRPSKOM jeziku, uključujući logo prompt (koristi se za ChatGPT / Gemini).
+SVE piši na SRPSKOM jeziku OSIM logoConceptPrompt koji MORA biti na ENGLESKOM (koristi se za ChatGPT / Gemini).
 ───────────────────────────────────────
 O BRENDU
 ───────────────────────────────────────
@@ -1585,7 +1595,13 @@ Napravi JSON sa ovom strukturom (SAMO JSON, bez markdown):
       "Zlatno pravilo brenda — ovo se nikad ne krši"
     ]
   },
-  "logoConceptPrompt": "Dizajniraj čist, profesionalan logotip za sajt, sa 4 varijacije na beloj pozadini: [1] Ikona — simbol bez teksta, [2] Wordmark — samo tipografija, [3] Kombinacija — ikona + tekst, [4] Favicon — pojednostavljen za male dimenzije. Stil: moderan sajt, ne umetnička ilustracija. Visok kontrast dugmadi, čist layout. Inspirisan arhetipom ${fullContext.archetype}, ivice: ${fullContext.geometryDesc}, boja brenda ${fullContext.name}. Vizija klijenta: ${fullContext.vision}. Format 16:9, studijsko osvetljenje, kvalitet za portfolio."
+  "logoConceptPrompt": "Design a clean, professional logo for a website, with 4 variations on white background: [1] Icon — symbol without text, [2] Wordmark — typography only, [3] Combination — icon + text, [4] Favicon — simplified for small sizes. Style: modern website, not artistic illustration. High contrast buttons, clean layout. Inspired by ${fullContext.archetype} archetype, edges: ${fullContext.geometryDesc}, brand color of ${fullContext.name}. Client vision: ${fullContext.vision}. Format 16:9, studio lighting, portfolio quality.",
+  "lezenda_dizajna": {
+    "zasto_ovaj_naslov": "Objasni u 1-2 rečenice zašto je baš ovaj hero naslov dobar za brend — kako prenosi emociju i obećanje.",
+    "psihologija_boja": "Objasni psihologiju izabrane palete — zašto ove boje izazivaju željeni osećaj kod ciljne publike.",
+    "uloga_dugmadi": "Objasni zašto je boja akcije (action) izabrana za dugmad — kako privlači pažnju i pokreće konverziju.",
+    "glavna_zabrana": "Navedi najvažniju stvar koju ovaj brend NIKAD ne sme da uradi vizuelno — i objasni zašto."
+  }
 }
 PRAVILA:
 1. PRVO oblik (ivice, geometrija), PA ONDA boja iz oblika i materijala
@@ -1593,7 +1609,8 @@ PRAVILA:
 3. Boje moraju da prenose osećaj: "${fullContext.feeling}"
 4. Google Font imena moraju TAČNO postojati
 5. CSS vrednosti (border-radius, box-shadow, spacing) moraju biti konkretne i odgovarati klizačima
-6. SVE na srpskom jeziku`;
+6. SVE na srpskom jeziku OSIM logoConceptPrompt koji MORA biti na ENGLESKOM
+7. lezenda_dizajna mora imati sva 4 polja popunjena na srpskom — kratko i konkretno`;
 
             const response = await fetch("https://api.anthropic.com/v1/messages", {
                 method: "POST",
@@ -1642,6 +1659,14 @@ PRAVILA:
                     parsed.guidelines.donts = parsed.guidelines.donts || [];
                     parsed.guidelines.always = parsed.guidelines.always || [];
                 }
+                if (!parsed.lezenda_dizajna) {
+                    parsed.lezenda_dizajna = {
+                        zasto_ovaj_naslov: '',
+                        psihologija_boja: '',
+                        uloga_dugmadi: '',
+                        glavna_zabrana: ''
+                    };
+                }
                 const extractHex = (val) => {
                     if (typeof val !== 'string') return '#000000';
                     const match = val.match(/#[0-9A-Fa-f]{3,8}/);
@@ -1687,9 +1712,19 @@ PRAVILA:
                 dark: safeColor(colors.dark)
             };
 
-            const br = /^[\d.]+(px|rem|em|%)$/.test(system.uiSpecs.borderRadius.split(' ')[0])
-                ? system.uiSpecs.borderRadius.split(' ')[0]
+            const br = /^[\d.]+(px|rem|em|%)$/.test((system.uiSpecs.borderRadius || '12px').split(' ')[0])
+                ? (system.uiSpecs.borderRadius || '12px').split(' ')[0]
                 : '12px';
+            const shadow = /^(none|0)/.test(system.uiSpecs.shadowStyle || '') || /^[\d]/.test(system.uiSpecs.shadowStyle || '')
+                ? (system.uiSpecs.shadowStyle || 'none')
+                : 'none';
+
+            // Legenda dizajna (sticker annotations)
+            const leg = system.lezenda_dizajna || {};
+            const safeLegNaslov = sanitizeHTML(leg.zasto_ovaj_naslov || '');
+            const safeLegBoja = sanitizeHTML(leg.psihologija_boja || '');
+            const safeLegDugme = sanitizeHTML(leg.uloga_dugmadi || '');
+            const safeLegZabrana = sanitizeHTML(leg.glavna_zabrana || '');
 
             // Break container out for immersive view
             const container = document.querySelector('.container');
@@ -1709,9 +1744,17 @@ PRAVILA:
             };
             document.head.appendChild(link);
 
+            // Sticker helper: small annotation box
+            const sticker = (text, pos) => {
+                if (!text) return '';
+                return `<div style="position:absolute;${pos};background:${sc.dark};color:${sc.light};font-family:'${safeBody}',sans-serif;font-size:12px;line-height:1.5;padding:10px 14px;border-radius:8px;max-width:260px;box-shadow:${shadow !== 'none' ? shadow : '0 4px 16px rgba(0,0,0,0.12)'};z-index:10;pointer-events:none;">
+                    <span style="font-weight:700;display:block;margin-bottom:2px;">&#x1F4CC; Dizajnerska napomena</span>${text}
+                </div>`;
+            };
+
             // Build brand values from guidelines
             const valuesHTML = (system.guidelines.dos || []).map(text => `
-                <div class="brand-value" style="background:${sc.light};border-radius:${br};border-left:4px solid ${sc.action};">
+                <div class="brand-value" style="background:white;border-radius:${br};border-left:4px solid ${sc.action};box-shadow:${shadow};">
                     <p style="font-family:'${safeBody}',sans-serif;color:${sc.dark};font-size:17px;line-height:1.6;margin:0;">${sanitizeHTML(text)}</p>
                 </div>`).join('');
 
@@ -1720,29 +1763,37 @@ PRAVILA:
                     <span style="color:${sc.support};margin-right:8px;">&#x2715;</span> ${sanitizeHTML(text)}
                 </div>`).join('');
 
+            // Typography usage info
+            const safeTypoUsage = sanitizeHTML(system.typography.usage || '');
+            const safeUiDesc = sanitizeHTML(system.uiSpecs.description || '');
+
+            // Store logo prompt for copy button
+            window._logoPromptText = system.logoConceptPrompt || '';
+
             const html = `
-                <!-- NAVIGATION -->
+                <!-- NAVIGATION (60% light bg) -->
                 <nav class="brand-nav" style="background:${sc.light};border-bottom:1px solid ${sc.dark}10;">
                     <div class="brand-nav-inner">
                         <span style="font-family:'${safeHeadline}',sans-serif;font-weight:900;font-size:22px;color:${sc.identity};letter-spacing:-0.5px;">${safeName}</span>
-                        <button style="background:${sc.action};color:${sc.dark};border:none;padding:10px 24px;border-radius:${br};font-family:'${safeBody}',sans-serif;font-weight:700;font-size:14px;cursor:pointer;">Kontakt</button>
+                        <button style="background:${sc.action};color:white;border:none;padding:10px 24px;border-radius:${br};font-family:'${safeBody}',sans-serif;font-weight:700;font-size:14px;cursor:pointer;box-shadow:${shadow};">Kontakt</button>
                     </div>
                 </nav>
 
-                <!-- HERO -->
-                <section class="brand-hero-section" style="background:${sc.identity};">
+                <!-- HERO (light bg, identity for accents — 60-30-10) -->
+                <section class="brand-hero-section" style="background:${sc.light};position:relative;overflow:visible;">
                     <div class="brand-hero-content">
-                        <h1 style="font-family:'${safeHeadline}',sans-serif;color:${sc.light};font-size:clamp(48px,8vw,96px);font-weight:900;letter-spacing:-3px;margin:0 0 16px;line-height:1;">${safeName}</h1>
-                        ${safeEssence ? `<p style="font-family:'${safeBody}',sans-serif;color:${sc.light};opacity:0.6;font-size:clamp(14px,1.5vw,18px);text-transform:uppercase;letter-spacing:3px;font-weight:600;margin:0 0 24px;">${safeEssence}</p>` : ''}
-                        <p style="font-family:'${safeBody}',sans-serif;color:${sc.light};opacity:0.9;font-size:clamp(18px,2.5vw,28px);max-width:700px;line-height:1.5;margin:0 0 48px;">${safeUniqueness}</p>
+                        ${safeEssence ? `<p style="font-family:'${safeBody}',sans-serif;color:${sc.identity};font-size:clamp(12px,1.2vw,15px);text-transform:uppercase;letter-spacing:4px;font-weight:700;margin:0 0 20px;">${safeEssence}</p>` : ''}
+                        <h1 style="font-family:'${safeHeadline}',sans-serif;color:${sc.dark};font-size:clamp(48px,8vw,96px);font-weight:900;letter-spacing:-3px;margin:0 0 20px;line-height:1;">${safeName}</h1>
+                        <p style="font-family:'${safeBody}',sans-serif;color:${sc.dark};opacity:0.7;font-size:clamp(18px,2.5vw,28px);max-width:700px;line-height:1.5;margin:0 0 48px;">${safeUniqueness}</p>
                         <div>
-                            <button style="background:${sc.action};color:${sc.dark};border:none;padding:18px 48px;border-radius:${br};font-family:'${safeBody}',sans-serif;font-weight:700;font-size:18px;cursor:pointer;margin-right:16px;">Započni</button>
-                            <button style="background:transparent;color:${sc.light};border:2px solid ${sc.light}50;padding:18px 48px;border-radius:${br};font-family:'${safeBody}',sans-serif;font-weight:600;font-size:18px;cursor:pointer;">Saznaj više</button>
+                            <button style="background:${sc.action};color:white;border:none;padding:18px 48px;border-radius:${br};font-family:'${safeBody}',sans-serif;font-weight:700;font-size:18px;cursor:pointer;margin-right:16px;box-shadow:${shadow};">Započni</button>
+                            <button style="background:transparent;color:${sc.dark};border:2px solid ${sc.dark}30;padding:18px 48px;border-radius:${br};font-family:'${safeBody}',sans-serif;font-weight:600;font-size:18px;cursor:pointer;">Saznaj više</button>
                         </div>
                     </div>
+                    ${sticker(safeLegNaslov, 'top:20px;right:20px')}
                 </section>
 
-                <!-- COLOR FLOW -->
+                <!-- COLOR PALETTE -->
                 <div class="brand-color-flow">
                     <div style="background:${sc.identity};flex:2;"><span>${sanitizeHTML(sc.identity)}</span></div>
                     <div style="background:${sc.support};flex:1.5;"><span>${sanitizeHTML(sc.support)}</span></div>
@@ -1751,34 +1802,75 @@ PRAVILA:
                     <div style="background:${sc.dark};flex:1.5;"><span>${sanitizeHTML(sc.dark)}</span></div>
                 </div>
 
-                <!-- BRAND STORY -->
-                <section class="brand-story" style="background:${sc.light};">
+                <!-- COLOR STORY + STICKER -->
+                <section class="brand-story" style="background:${sc.light};position:relative;">
                     <div class="brand-story-inner">
                         <h2 style="font-family:'${safeHeadline}',sans-serif;color:${sc.identity};font-size:clamp(28px,4vw,48px);font-weight:900;margin:0 0 32px;letter-spacing:-1px;">Priča iza boja</h2>
                         <p style="font-family:'${safeBody}',sans-serif;color:${sc.dark};font-size:20px;line-height:1.9;opacity:0.85;max-width:750px;">${safeReasoning}</p>
                     </div>
+                    ${sticker(safeLegBoja, 'bottom:20px;right:20px')}
                 </section>
 
-                <!-- TYPOGRAPHY IN ACTION -->
-                <section class="brand-typo-section" style="background:${sc.support}12;">
+                <!-- SERVICES MOCKUP (60% light, 30% support accents) -->
+                <section style="background:${sc.light};padding:100px 40px;position:relative;">
+                    <div style="max-width:900px;margin:0 auto;">
+                        <h2 style="font-family:'${safeHeadline}',sans-serif;color:${sc.dark};font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 16px;letter-spacing:-1px;">Šta radimo</h2>
+                        <p style="font-family:'${safeBody}',sans-serif;color:${sc.dark};opacity:0.6;font-size:18px;margin:0 0 48px;">${safeUiDesc}</p>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px;">
+                            <div style="background:white;border-radius:${br};padding:32px;box-shadow:${shadow};border-top:4px solid ${sc.identity};">
+                                <div style="width:48px;height:48px;background:${sc.identity}15;border-radius:${br};display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px;">&#x2605;</div>
+                                <h3 style="font-family:'${safeHeadline}',sans-serif;color:${sc.dark};font-size:20px;font-weight:700;margin:0 0 8px;">Strategija</h3>
+                                <p style="font-family:'${safeBody}',sans-serif;color:${sc.dark};opacity:0.6;font-size:15px;line-height:1.6;margin:0;">Definišemo poziciju brenda na tržištu i pravac komunikacije.</p>
+                            </div>
+                            <div style="background:white;border-radius:${br};padding:32px;box-shadow:${shadow};border-top:4px solid ${sc.support};">
+                                <div style="width:48px;height:48px;background:${sc.support}15;border-radius:${br};display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px;">&#x270E;</div>
+                                <h3 style="font-family:'${safeHeadline}',sans-serif;color:${sc.dark};font-size:20px;font-weight:700;margin:0 0 8px;">Dizajn</h3>
+                                <p style="font-family:'${safeBody}',sans-serif;color:${sc.dark};opacity:0.6;font-size:15px;line-height:1.6;margin:0;">Vizuelni identitet koji prenosi suštinu brenda na prvi pogled.</p>
+                            </div>
+                            <div style="background:white;border-radius:${br};padding:32px;box-shadow:${shadow};border-top:4px solid ${sc.action};">
+                                <div style="width:48px;height:48px;background:${sc.action}15;border-radius:${br};display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px;">&#x1F680;</div>
+                                <h3 style="font-family:'${safeHeadline}',sans-serif;color:${sc.dark};font-size:20px;font-weight:700;margin:0 0 8px;">Implementacija</h3>
+                                <p style="font-family:'${safeBody}',sans-serif;color:${sc.dark};opacity:0.6;font-size:15px;line-height:1.6;margin:0;">Primena identiteta na sve tačke kontakta sa klijentima.</p>
+                            </div>
+                        </div>
+                    </div>
+                    ${sticker(safeLegDugme, 'top:30px;right:20px')}
+                </section>
+
+                <!-- TYPOGRAPHY CHARTER -->
+                <section class="brand-typo-section" style="background:${sc.support}08;">
                     <div class="brand-typo-inner">
-                        <h2 style="font-family:'${safeHeadline}',sans-serif;color:${sc.identity};font-size:clamp(36px,5vw,64px);font-weight:900;letter-spacing:-2px;margin:0 0 24px;line-height:1.1;">Svaka reč nosi težinu vizuelnog identiteta</h2>
-                        <p style="font-family:'${safeBody}',sans-serif;color:${sc.dark};font-size:20px;line-height:1.8;opacity:0.75;max-width:650px;margin:0 0 48px;">Dobar dizajn komunicira pre nego što se pročita. Tipografija definiše ton, ritam i karakter svakog elementa brenda ${safeName}.</p>
-                        <div class="brand-font-tags">
+                        <h2 style="font-family:'${safeHeadline}',sans-serif;color:${sc.identity};font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 16px;letter-spacing:-1px;">Tipografska povelja</h2>
+                        <p style="font-family:'${safeBody}',sans-serif;color:${sc.dark};opacity:0.6;font-size:16px;margin:0 0 48px;">${safeTypoUsage}</p>
+                        <div style="display:flex;flex-direction:column;gap:24px;max-width:700px;">
+                            <div style="background:white;border-radius:${br};padding:24px 32px;box-shadow:${shadow};">
+                                <p style="font-family:'${safeBody}',sans-serif;color:${sc.dark};opacity:0.4;font-size:11px;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">H1 — Naslov</p>
+                                <p style="font-family:'${safeHeadline}',sans-serif;color:${sc.dark};font-size:clamp(32px,5vw,56px);font-weight:900;letter-spacing:-2px;margin:0;line-height:1.1;">${safeName}</p>
+                            </div>
+                            <div style="background:white;border-radius:${br};padding:24px 32px;box-shadow:${shadow};">
+                                <p style="font-family:'${safeBody}',sans-serif;color:${sc.dark};opacity:0.4;font-size:11px;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">H2 — Podnaslov</p>
+                                <p style="font-family:'${safeHeadline}',sans-serif;color:${sc.dark};font-size:clamp(22px,3vw,36px);font-weight:700;letter-spacing:-1px;margin:0;line-height:1.2;">${safeUniqueness}</p>
+                            </div>
+                            <div style="background:white;border-radius:${br};padding:24px 32px;box-shadow:${shadow};">
+                                <p style="font-family:'${safeBody}',sans-serif;color:${sc.dark};opacity:0.4;font-size:11px;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">P — Telo teksta</p>
+                                <p style="font-family:'${safeBody}',sans-serif;color:${sc.dark};font-size:17px;line-height:1.8;margin:0;opacity:0.8;">Dobar dizajn komunicira pre nego što se pročita. Tipografija definiše ton, ritam i karakter svakog elementa brenda ${safeName}.</p>
+                            </div>
+                        </div>
+                        <div class="brand-font-tags" style="margin-top:32px;">
                             <span style="background:${sc.identity}15;color:${sc.identity};padding:8px 20px;border-radius:100px;font-family:'${safeHeadline}',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;">${safeHeadline}</span>
                             <span style="background:${sc.dark}10;color:${sc.dark};padding:8px 20px;border-radius:100px;font-family:'${safeBody}',sans-serif;font-weight:600;font-size:14px;letter-spacing:1px;">${safeBody}</span>
                         </div>
                     </div>
                 </section>
 
-                <!-- CTA / SIGNUP SECTION -->
+                <!-- CTA / SIGNUP (identity bg — 30% accent zone) -->
                 <section class="brand-cta-section" style="background:${sc.identity};">
                     <div class="brand-cta-inner">
                         <h2 style="font-family:'${safeHeadline}',sans-serif;color:${sc.light};font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 12px;">Budite deo priče</h2>
                         <p style="font-family:'${safeBody}',sans-serif;color:${sc.light};opacity:0.8;font-size:18px;margin:0 0 36px;">Ostavite email i budite prvi koji saznaju novosti.</p>
                         <div class="brand-cta-form" style="border-radius:${br};">
                             <input type="email" placeholder="vaš@email.com" readonly style="flex:1;padding:18px 24px;border:none;font-family:'${safeBody}',sans-serif;font-size:17px;color:${sc.dark};background:${sc.light};border-radius:${br} 0 0 ${br};outline:none;min-width:0;">
-                            <button style="background:${sc.action};color:${sc.dark};border:none;padding:18px 36px;font-family:'${safeBody}',sans-serif;font-weight:700;font-size:17px;cursor:pointer;border-radius:0 ${br} ${br} 0;white-space:nowrap;">Prijavi se</button>
+                            <button style="background:${sc.action};color:white;border:none;padding:18px 36px;font-family:'${safeBody}',sans-serif;font-weight:700;font-size:17px;cursor:pointer;border-radius:0 ${br} ${br} 0;white-space:nowrap;">Prijavi se</button>
                         </div>
                     </div>
                 </section>
@@ -1790,14 +1882,16 @@ PRAVILA:
                         <div class="brand-values-grid">${valuesHTML}</div>
                         ${avoidHTML ? `<div style="max-width:600px;margin:60px auto 0;"><p style="font-family:'${safeBody}',sans-serif;font-weight:700;color:${sc.dark};opacity:0.4;font-size:13px;text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;">Izbegavamo</p>${avoidHTML}</div>` : ''}
                     </div>
+                    ${sticker(safeLegZabrana, 'bottom:20px;left:20px')}
                 </section>
 
-                <!-- LOGO BRIEF -->
+                <!-- LOGO BRIEF + COPY BUTTON -->
                 <section class="brand-logo-section" style="background:${sc.dark};">
                     <div class="brand-logo-inner">
                         <h2 style="font-family:'${safeHeadline}',sans-serif;color:${sc.light};font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 16px;">Vizuelni koncept</h2>
                         <p style="font-family:'${safeBody}',sans-serif;color:${sc.light};opacity:0.6;font-size:16px;margin:0 0 36px;">Kopirajte ovaj prompt u ChatGPT ili Gemini da generišete logo</p>
                         <div style="background:${sc.dark};border:1px solid ${sc.light}20;padding:32px;border-radius:${br};font-family:'Courier New',monospace;font-size:14px;line-height:1.8;color:${sc.light};opacity:0.85;text-align:left;max-width:800px;margin:0 auto;white-space:pre-wrap;">${safeLogoPrompt}</div>
+                        <button onclick="copyToClipboard(window._logoPromptText, this)" style="margin-top:20px;background:${sc.action};color:white;border:none;padding:14px 32px;border-radius:${br};font-family:'${safeBody}',sans-serif;font-weight:700;font-size:15px;cursor:pointer;box-shadow:${shadow};">&#x1F4CB; Kopiraj prompt</button>
                     </div>
                 </section>
 
@@ -1834,30 +1928,27 @@ PRAVILA:
             }
 
             try {
-            const brandContent = document.getElementById('brandContent');
-            const contentClone = brandContent.cloneNode(true);
+            const sys = window.brandSystem;
+            const fd = window.brandFormData;
+            const sc = sys.colorSystem;
+            const safeHeadline = sanitizeFontName(sys.typography.headline);
+            const safeBody = sanitizeFontName(sys.typography.body);
+            const safeName = sanitizeHTML(fd.brandName);
+            const safeUniqueness = sanitizeHTML(sys.uniquenessStatement || fd.superpower);
+            const safeEssence = sanitizeHTML(sys.brandEssence || '');
+            const safeReasoning = sanitizeHTML(sc.reasoning);
+            const safeLogoPrompt = sanitizeHTML(sys.logoConceptPrompt);
+            const safeTypoUsage = sanitizeHTML(sys.typography.usage || '');
+            const safeUiDesc = sanitizeHTML(sys.uiSpecs.description || '');
+            const br = /^[\d.]+(px|rem|em|%)$/.test((sys.uiSpecs.borderRadius || '12px').split(' ')[0])
+                ? (sys.uiSpecs.borderRadius || '12px').split(' ')[0]
+                : '12px';
+            const shadow = /^(none|0)/.test(sys.uiSpecs.shadowStyle || '') || /^[\d]/.test(sys.uiSpecs.shadowStyle || '')
+                ? (sys.uiSpecs.shadowStyle || 'none')
+                : 'none';
 
-            // Remove sticky action bar from the download version
-            const actionBar = contentClone.querySelector('.brand-action-bar');
-            if (actionBar) actionBar.remove();
-
-            // Collect all brand-related CSS rules from current stylesheet
-            let brandCSS = '';
-            for (const sheet of document.styleSheets) {
-                try {
-                    for (const rule of sheet.cssRules) {
-                        const sel = rule.selectorText || '';
-                        const txt = rule.cssText || '';
-                        if (sel.includes('.brand-') || txt.includes('.brand-')) {
-                            brandCSS += txt + '\n';
-                        }
-                    }
-                } catch (e) {} // skip cross-origin stylesheets
-            }
-
-            const safeHeadline = sanitizeFontName(window.brandSystem.typography.headline);
-            const safeBody = sanitizeFontName(window.brandSystem.typography.body);
-            const safeName = sanitizeHTML(window.brandFormData.brandName);
+            const valuesHTML = (sys.guidelines.dos || []).map(t => `<div style="background:white;border-radius:${br};border-left:4px solid ${sc.action};padding:28px;box-shadow:${shadow};"><p style="font-family:'${safeBody}',sans-serif;color:${sc.dark};font-size:17px;line-height:1.6;margin:0;">${sanitizeHTML(t)}</p></div>`).join('');
+            const avoidHTML = (sys.guidelines.donts || []).map(t => `<div style="padding:12px 0;border-bottom:1px solid ${sc.dark}15;font-family:'${safeBody}',sans-serif;color:${sc.dark};opacity:0.6;font-size:15px;"><span style="color:${sc.support};margin-right:8px;">&#x2715;</span> ${sanitizeHTML(t)}</div>`).join('');
 
             const standaloneHTML = `<!DOCTYPE html>
 <html lang="sr"><head>
@@ -1865,19 +1956,167 @@ PRAVILA:
 <title>${safeName} — Vizuelni Identitet</title>
 <link href="https://fonts.googleapis.com/css2?family=${encodeURIComponent(safeHeadline)}:wght@400;600;700;900&family=${encodeURIComponent(safeBody)}:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: '${safeBody}', sans-serif; background: white; }
-${brandCSS}
-.print-bar { background: #10B981; color: white; padding: 16px 24px; text-align: center; font-family: system-ui, sans-serif; font-size: 15px; }
-@media print { .brand-hero-section { page-break-after: always; } .brand-story, .brand-typo-section, .brand-cta-section, .brand-values-section, .brand-logo-section { page-break-inside: avoid; } .print-bar, .brand-nav, .brand-action-bar { display: none !important; } }
+:root {
+  --primary: ${sc.identity};
+  --support: ${sc.support};
+  --action: ${sc.action};
+  --light: ${sc.light};
+  --dark: ${sc.dark};
+  --br: ${br};
+  --shadow: ${shadow};
+  --font-h: '${safeHeadline}', sans-serif;
+  --font-b: '${safeBody}', sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:var(--font-b); background:var(--light); color:var(--dark); }
+.brand-nav { position:sticky;top:0;z-index:50;background:var(--light);border-bottom:1px solid rgba(0,0,0,0.06); }
+.brand-nav-inner { max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:16px 40px; }
+.brand-hero-section { padding:120px 40px 100px;min-height:90vh;display:flex;align-items:center; }
+.brand-hero-content { max-width:900px;margin:0 auto; }
+.brand-color-flow { display:flex;height:60px; }
+.brand-color-flow > div { display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;font-family:monospace;color:white; }
+.brand-color-flow > div > span { opacity:0.7; }
+.brand-story { padding:100px 40px;text-align:center; }
+.brand-story-inner { max-width:800px;margin:0 auto; }
+.brand-typo-section { padding:100px 40px; }
+.brand-typo-inner { max-width:900px;margin:0 auto; }
+.brand-font-tags { display:flex;gap:12px;flex-wrap:wrap; }
+.brand-cta-section { padding:100px 40px;text-align:center; }
+.brand-cta-inner { max-width:550px;margin:0 auto; }
+.brand-cta-form { display:flex;box-shadow:0 8px 30px rgba(0,0,0,0.2);overflow:hidden; }
+.brand-values-section { padding:100px 40px; }
+.brand-values-inner { max-width:900px;margin:0 auto; }
+.brand-values-grid { display:grid;grid-template-columns:1fr 1fr;gap:20px; }
+.brand-logo-section { padding:100px 40px;text-align:center; }
+.brand-logo-inner { max-width:900px;margin:0 auto; }
+.brand-footer { padding:60px 40px;text-align:center; }
+.brand-footer-inner { display:flex;justify-content:space-between;align-items:center;max-width:900px;margin:0 auto; }
+.brand-footer-palette { display:flex;gap:8px; }
+.print-bar { background:#10B981;color:white;padding:16px 24px;text-align:center;font-family:system-ui,sans-serif;font-size:15px; }
+@media print {
+  .brand-hero-section { page-break-after:always; }
+  .brand-story,.brand-typo-section,.brand-cta-section,.brand-values-section,.brand-logo-section { page-break-inside:avoid; }
+  .print-bar,.brand-nav { display:none !important; }
+}
+@media (max-width:768px) {
+  .brand-hero-section { padding:80px 20px 60px;min-height:80vh; }
+  .brand-color-flow { height:40px; }
+  .brand-color-flow > div > span { font-size:9px; }
+  .brand-story,.brand-typo-section,.brand-cta-section,.brand-values-section,.brand-logo-section { padding:60px 20px; }
+  .brand-values-grid { grid-template-columns:1fr; }
+  .brand-cta-form { flex-direction:column; }
+  .brand-cta-form input,.brand-cta-form button { border-radius:0 !important; }
+  .brand-footer-inner { flex-direction:column;gap:20px; }
+  .brand-nav-inner { padding:0 20px; }
+}
 </style></head><body>
 <div class="print-bar">&#x1F4E2; Koristite <b>Ctrl+P</b> (ili <b>Cmd+P</b>) &rarr; <b>"Sačuvaj kao PDF"</b> za preuzimanje.</div>
-${contentClone.innerHTML}
+
+<nav class="brand-nav">
+  <div class="brand-nav-inner">
+    <span style="font-family:var(--font-h);font-weight:900;font-size:22px;color:var(--primary);">${safeName}</span>
+    <span style="background:var(--action);color:white;padding:10px 24px;border-radius:var(--br);font-family:var(--font-b);font-weight:700;font-size:14px;">Kontakt</span>
+  </div>
+</nav>
+
+<section class="brand-hero-section" style="background:var(--light);">
+  <div class="brand-hero-content">
+    ${safeEssence ? `<p style="font-family:var(--font-b);color:var(--primary);font-size:15px;text-transform:uppercase;letter-spacing:4px;font-weight:700;margin:0 0 20px;">${safeEssence}</p>` : ''}
+    <h1 style="font-family:var(--font-h);color:var(--dark);font-size:clamp(48px,8vw,96px);font-weight:900;letter-spacing:-3px;margin:0 0 20px;line-height:1;">${safeName}</h1>
+    <p style="font-family:var(--font-b);color:var(--dark);opacity:0.7;font-size:clamp(18px,2.5vw,28px);max-width:700px;line-height:1.5;margin:0 0 48px;">${safeUniqueness}</p>
+    <span style="display:inline-block;background:var(--action);color:white;padding:18px 48px;border-radius:var(--br);font-family:var(--font-b);font-weight:700;font-size:18px;box-shadow:var(--shadow);">Započni</span>
+  </div>
+</section>
+
+<div class="brand-color-flow">
+  <div style="background:${sc.identity};flex:2;"><span>${sc.identity}</span></div>
+  <div style="background:${sc.support};flex:1.5;"><span>${sc.support}</span></div>
+  <div style="background:${sc.action};flex:1;color:${sc.dark};"><span>${sc.action}</span></div>
+  <div style="background:${sc.light};flex:1;color:${sc.dark};border-top:1px solid ${sc.dark}20;border-bottom:1px solid ${sc.dark}20;"><span>${sc.light}</span></div>
+  <div style="background:${sc.dark};flex:1.5;"><span>${sc.dark}</span></div>
+</div>
+
+<section class="brand-story" style="background:var(--light);">
+  <div class="brand-story-inner">
+    <h2 style="font-family:var(--font-h);color:var(--primary);font-size:clamp(28px,4vw,48px);font-weight:900;margin:0 0 32px;">Priča iza boja</h2>
+    <p style="font-family:var(--font-b);color:var(--dark);font-size:20px;line-height:1.9;opacity:0.85;max-width:750px;">${safeReasoning}</p>
+  </div>
+</section>
+
+<section style="background:var(--light);padding:100px 40px;">
+  <div style="max-width:900px;margin:0 auto;">
+    <h2 style="font-family:var(--font-h);color:var(--dark);font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 16px;">Šta radimo</h2>
+    <p style="font-family:var(--font-b);color:var(--dark);opacity:0.6;font-size:18px;margin:0 0 48px;">${safeUiDesc}</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px;">
+      <div style="background:white;border-radius:var(--br);padding:32px;box-shadow:var(--shadow);border-top:4px solid var(--primary);"><h3 style="font-family:var(--font-h);color:var(--dark);font-size:20px;font-weight:700;margin:0 0 8px;">Strategija</h3><p style="font-family:var(--font-b);color:var(--dark);opacity:0.6;font-size:15px;line-height:1.6;margin:0;">Definišemo poziciju brenda na tržištu i pravac komunikacije.</p></div>
+      <div style="background:white;border-radius:var(--br);padding:32px;box-shadow:var(--shadow);border-top:4px solid var(--support);"><h3 style="font-family:var(--font-h);color:var(--dark);font-size:20px;font-weight:700;margin:0 0 8px;">Dizajn</h3><p style="font-family:var(--font-b);color:var(--dark);opacity:0.6;font-size:15px;line-height:1.6;margin:0;">Vizuelni identitet koji prenosi suštinu brenda na prvi pogled.</p></div>
+      <div style="background:white;border-radius:var(--br);padding:32px;box-shadow:var(--shadow);border-top:4px solid var(--action);"><h3 style="font-family:var(--font-h);color:var(--dark);font-size:20px;font-weight:700;margin:0 0 8px;">Implementacija</h3><p style="font-family:var(--font-b);color:var(--dark);opacity:0.6;font-size:15px;line-height:1.6;margin:0;">Primena identiteta na sve tačke kontakta sa klijentima.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="brand-typo-section" style="background:${sc.support}08;">
+  <div class="brand-typo-inner">
+    <h2 style="font-family:var(--font-h);color:var(--primary);font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 16px;">Tipografska povelja</h2>
+    <p style="font-family:var(--font-b);color:var(--dark);opacity:0.6;font-size:16px;margin:0 0 48px;">${safeTypoUsage}</p>
+    <div style="display:flex;flex-direction:column;gap:24px;max-width:700px;">
+      <div style="background:white;border-radius:var(--br);padding:24px 32px;box-shadow:var(--shadow);"><p style="color:var(--dark);opacity:0.4;font-size:11px;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">H1 — Naslov</p><p style="font-family:var(--font-h);color:var(--dark);font-size:clamp(32px,5vw,56px);font-weight:900;letter-spacing:-2px;margin:0;line-height:1.1;">${safeName}</p></div>
+      <div style="background:white;border-radius:var(--br);padding:24px 32px;box-shadow:var(--shadow);"><p style="color:var(--dark);opacity:0.4;font-size:11px;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">H2 — Podnaslov</p><p style="font-family:var(--font-h);color:var(--dark);font-size:clamp(22px,3vw,36px);font-weight:700;letter-spacing:-1px;margin:0;line-height:1.2;">${safeUniqueness}</p></div>
+      <div style="background:white;border-radius:var(--br);padding:24px 32px;box-shadow:var(--shadow);"><p style="color:var(--dark);opacity:0.4;font-size:11px;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">P — Telo teksta</p><p style="font-family:var(--font-b);color:var(--dark);font-size:17px;line-height:1.8;margin:0;opacity:0.8;">Dobar dizajn komunicira pre nego što se pročita. Tipografija definiše ton, ritam i karakter svakog elementa.</p></div>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:32px;">
+      <span style="background:${sc.identity}15;color:var(--primary);padding:8px 20px;border-radius:100px;font-family:var(--font-h);font-weight:700;font-size:14px;">${safeHeadline}</span>
+      <span style="background:${sc.dark}10;color:var(--dark);padding:8px 20px;border-radius:100px;font-family:var(--font-b);font-weight:600;font-size:14px;">${safeBody}</span>
+    </div>
+  </div>
+</section>
+
+<section class="brand-cta-section" style="background:var(--primary);">
+  <div class="brand-cta-inner">
+    <h2 style="font-family:var(--font-h);color:var(--light);font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 12px;">Budite deo priče</h2>
+    <p style="font-family:var(--font-b);color:var(--light);opacity:0.8;font-size:18px;margin:0 0 36px;">Ostavite email i budite prvi koji saznaju novosti.</p>
+    <div class="brand-cta-form" style="border-radius:var(--br);">
+      <input type="email" placeholder="vaš@email.com" readonly style="flex:1;padding:18px 24px;border:none;font-family:var(--font-b);font-size:17px;color:var(--dark);background:var(--light);border-radius:var(--br) 0 0 var(--br);outline:none;min-width:0;">
+      <span style="display:inline-flex;align-items:center;background:var(--action);color:white;padding:18px 36px;font-family:var(--font-b);font-weight:700;font-size:17px;white-space:nowrap;">Prijavi se</span>
+    </div>
+  </div>
+</section>
+
+<section class="brand-values-section" style="background:var(--light);">
+  <div class="brand-values-inner">
+    <h2 style="font-family:var(--font-h);color:var(--primary);font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 48px;text-align:center;">Vrednosti brenda</h2>
+    <div class="brand-values-grid">${valuesHTML}</div>
+    ${avoidHTML ? `<div style="max-width:600px;margin:60px auto 0;"><p style="font-weight:700;color:var(--dark);opacity:0.4;font-size:13px;text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;">Izbegavamo</p>${avoidHTML}</div>` : ''}
+  </div>
+</section>
+
+<section class="brand-logo-section" style="background:var(--dark);">
+  <div class="brand-logo-inner">
+    <h2 style="font-family:var(--font-h);color:var(--light);font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 16px;">Vizuelni koncept</h2>
+    <p style="font-family:var(--font-b);color:var(--light);opacity:0.6;font-size:16px;margin:0 0 36px;">Kopirajte ovaj prompt u ChatGPT ili Gemini da generišete logo</p>
+    <div style="background:var(--dark);border:1px solid ${sc.light}20;padding:32px;border-radius:var(--br);font-family:'Courier New',monospace;font-size:14px;line-height:1.8;color:var(--light);opacity:0.85;text-align:left;max-width:800px;margin:0 auto;white-space:pre-wrap;">${safeLogoPrompt}</div>
+  </div>
+</section>
+
+<footer class="brand-footer" style="background:var(--primary);color:var(--light);">
+  <div class="brand-footer-inner">
+    <span style="font-family:var(--font-h);font-weight:900;font-size:28px;">${safeName}</span>
+    <div class="brand-footer-palette">
+      <span style="width:24px;height:24px;border-radius:50%;background:${sc.identity};border:2px solid ${sc.light};display:inline-block;"></span>
+      <span style="width:24px;height:24px;border-radius:50%;background:${sc.support};display:inline-block;"></span>
+      <span style="width:24px;height:24px;border-radius:50%;background:${sc.action};display:inline-block;"></span>
+      <span style="width:24px;height:24px;border-radius:50%;background:${sc.light};display:inline-block;"></span>
+      <span style="width:24px;height:24px;border-radius:50%;background:${sc.dark};border:2px solid ${sc.light}40;display:inline-block;"></span>
+    </div>
+    <p style="font-size:12px;opacity:0.5;margin-top:20px;">Kreirala <a href="https://www.ivanadimitrijevic.rs" target="_blank" style="color:inherit;text-decoration:underline;">Ivana Dimitrijević</a></p>
+  </div>
+</footer>
+
 <` + `script>document.fonts.ready.then(function(){window.print();});</` + `script>
 </body></html>`;
 
             // Try Blob download, fall back to clipboard if sandbox blocks it
-            const fileName = window.brandFormData.brandName.replace(/[^a-zA-Z0-9а-яА-ЯčćžšđČĆŽŠĐ ]/g, '').replace(/\s+/g, '-') + '-brandbook.html';
+            const fileName = fd.brandName.replace(/[^a-zA-Z0-9а-яА-ЯčćžšđČĆŽŠĐ ]/g, '').replace(/\s+/g, '-') + '-brandbook.html';
             try {
                 const blob = new Blob([standaloneHTML], { type: 'text/html;charset=utf-8' });
                 const url = URL.createObjectURL(blob);
