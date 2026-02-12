@@ -779,338 +779,321 @@
 
         <!-- Section 1: Osnova -->
         <div class="section active" id="section1">
-            <div class="section-title">&#x1F9ED; Osnova Brenda</div>
-            <div class="section-subtitle">Pocnimo sa osnovama - ko ste i sta radite?</div>
-
+            <div class="section-title">&#x1F9ED; O vašem brendu</div>
+            <div class="section-subtitle">Krenimo od početka — ko ste i šta radite?</div>
             <div class="question">
                 <label class="question-label">Naziv brenda:</label>
-                <input type="text" id="brandName" placeholder="Unesite naziv vaseg brenda">
+                <input type="text" id="brandName" placeholder="Unesite naziv vašeg brenda">
                 <div class="validation-error" id="brandNameError">&#x26A0;&#xFE0F; Naziv brenda je obavezan</div>
             </div>
-
             <div class="question">
-                <label class="question-label">Kategorija/Industrija:</label>
+                <label class="question-label">Čime se bavite?</label>
                 <div class="cards-grid">
                     <div class="card" data-field="category" data-value="tech">
                         <div class="card-icon">&#x1F4BB;</div>
-                        <div class="card-title">Tehnologija & Softver</div>
-                        <div class="card-desc">SaaS, IT, Digital</div>
+                        <div class="card-title">Tehnologija i softver</div>
+                        <div class="card-desc">SaaS, IT, digitalni proizvodi</div>
                     </div>
                     <div class="card" data-field="category" data-value="consulting">
                         <div class="card-icon">&#x1F4DA;</div>
-                        <div class="card-title">Konsultacije & Edukacija</div>
-                        <div class="card-desc">Coaching, Obuke</div>
+                        <div class="card-title">Konsultacije i edukacija</div>
+                        <div class="card-desc">Mentorstvo, obuke, kursevi</div>
                     </div>
                     <div class="card" data-field="category" data-value="products">
                         <div class="card-icon">&#x1F6CD;&#xFE0F;</div>
-                        <div class="card-title">Proizvodi & E-commerce</div>
-                        <div class="card-desc">Fizicki proizvodi</div>
+                        <div class="card-title">Proizvodi i onlajn prodaja</div>
+                        <div class="card-desc">Fizički proizvodi, veb prodavnica</div>
                     </div>
                     <div class="card" data-field="category" data-value="services">
                         <div class="card-icon">&#x1F527;</div>
-                        <div class="card-title">Usluge & Zanatstvo</div>
-                        <div class="card-desc">B2B Services</div>
+                        <div class="card-title">Usluge i zanatstvo</div>
+                        <div class="card-desc">Poslovne usluge, agencije</div>
                     </div>
                 </div>
                 <div class="validation-error" id="categoryError">&#x26A0;&#xFE0F; Odaberite kategoriju</div>
             </div>
-
             <div class="question">
-                <label class="question-label">Vasa "Supermoc" - Sta cinite jedinstvenim?</label>
-                <textarea id="superpower" placeholder='Formula: Pomazem [KOME] da [RESE PROBLEM / OSTVARE CILJ] koristeci [MOJU METODU].'></textarea>
-                <div class="placeholder-text">Primer: "Pomazem kreativcima da izgrade autoritet koristeci autenticno pripovedanje i strategiju licnog brenda."</div>
+                <label class="question-label">U čemu ste najbolji? Šta vas izdvaja od drugih?</label>
+                <textarea id="superpower" placeholder='Primer formule: Pomažem [KOME] da [REŠE PROBLEM] koristeći [MOJU METODU].'></textarea>
+                <div class="placeholder-text">Primer: "Pomažem kreativcima da izgrade autoritet koristeći autentično pripovedanje i strategiju ličnog brenda."</div>
                 <div class="validation-error" id="superpowerError">&#x26A0;&#xFE0F; Ovo polje je obavezno</div>
             </div>
-
             <div class="question">
-                <label class="question-label">Brand Vizija - Opisite DETALJNO zeljeni vizuelni identitet:</label>
-                <textarea id="vision" placeholder="Boje koje asociraju na... Oblici koji evociraju... Materijali, teksture, osecaji..."></textarea>
-                <div class="placeholder-text">&#x1F4A1; TIP: Sto detaljnije opisete (boje, oblike, simbole, emocije), AI ce generisati precizniji identitet. Minimum 50 karaktera.</div>
+                <label class="question-label">Vizija brenda — opišite DETALJNO kako zamišljate izgled:</label>
+                <textarea id="vision" placeholder="Boje koje vas podsećaju na... Oblici koji dočaravaju... Materijali, teksture, osećaji..."></textarea>
+                <div class="placeholder-text">&#x1F4A1; Savet: Što detaljnije opišete (boje, oblike, simbole, emocije), to će rezultat biti precizniji. Minimum 50 karaktera.</div>
                 <div class="validation-error" id="visionError">&#x26A0;&#xFE0F; Vizija je prekratka (min 50 karaktera)</div>
             </div>
-
             <div class="buttons">
-                <button class="btn-next" onclick="goToSection(2)">Sledece &#x2192;</button>
+                <button class="btn-next" onclick="goToSection(2)">Dalje &#x2192;</button>
             </div>
         </div>
 
-        <!-- Section 2: Transformacija i Psihologija -->
+        <!-- Section 2: Šta klijent dobija -->
         <div class="section" id="section2">
-            <div class="section-title">&#x2728; Transformacija</div>
-            <div class="section-subtitle">Kakvu promenu donosite klijentima?</div>
-
+            <div class="section-title">&#x2728; Šta klijent dobija na kraju?</div>
+            <div class="section-subtitle">Kakvu promenu donosite ljudima koji rade sa vama?</div>
             <div class="question">
-                <label class="question-label">Glavni rezultat za klijenta:</label>
+                <label class="question-label">Šta vaš klijent dobija kad završite posao?</label>
                 <div class="cards-grid">
                     <div class="card" data-field="transformation" data-value="control">
                         <div class="card-icon">&#x1F3AF;</div>
                         <div class="card-title">Red i kontrola</div>
-                        <div class="card-desc">Od haosa &#x2192; sistem</div>
+                        <div class="card-desc">Imao haos, sad ima sistem</div>
                     </div>
                     <div class="card" data-field="transformation" data-value="growth">
                         <div class="card-icon">&#x1F4C8;</div>
                         <div class="card-title">Rast i napredak</div>
-                        <div class="card-desc">Od proseka &#x2192; vrh</div>
+                        <div class="card-desc">Bio prosek, sad je vrh</div>
                     </div>
                     <div class="card" data-field="transformation" data-value="security">
                         <div class="card-icon">&#x1F6E1;&#xFE0F;</div>
-                        <div class="card-title">Sigurnost</div>
-                        <div class="card-desc">Od rizika &#x2192; stabilnost</div>
+                        <div class="card-title">Sigurnost i mir</div>
+                        <div class="card-desc">Imao strah, sad je miran</div>
                     </div>
                     <div class="card" data-field="transformation" data-value="prestige">
                         <div class="card-icon">&#x1F451;</div>
-                        <div class="card-title">Prestiz i autoritet</div>
-                        <div class="card-desc">Od nepoznatog &#x2192; lider</div>
+                        <div class="card-title">Ugled i autoritet</div>
+                        <div class="card-desc">Bio nepoznat, sad je lider</div>
                     </div>
                 </div>
-                <div class="validation-error" id="transformationError">&#x26A0;&#xFE0F; Odaberite transformaciju</div>
+                <div class="validation-error" id="transformationError">&#x26A0;&#xFE0F; Odaberite rezultat</div>
             </div>
-
             <div class="question">
-                <label class="question-label">Kako zelite da se klijent oseca nakon interakcije:</label>
+                <label class="question-label">Kako želite da se klijent oseća posle saradnje sa vama?</label>
                 <div class="cards-grid">
                     <div class="card" data-field="feeling" data-value="relieved">
                         <div class="card-icon">&#x1F60C;</div>
-                        <div class="card-title">Olaksano</div>
-                        <div class="card-desc">Teret skinut</div>
+                        <div class="card-title">Olakšano</div>
+                        <div class="card-desc">Kao da je teret skinut</div>
                     </div>
                     <div class="card" data-field="feeling" data-value="powerful">
                         <div class="card-icon">&#x1F4AA;</div>
-                        <div class="card-title">Mocno</div>
-                        <div class="card-desc">Spreman za akciju</div>
+                        <div class="card-title">Moćno</div>
+                        <div class="card-desc">Spreman za sve</div>
                     </div>
                     <div class="card" data-field="feeling" data-value="smart">
                         <div class="card-icon">&#x1F9E0;</div>
                         <div class="card-title">Pametno</div>
-                        <div class="card-desc">Naucio vrednost</div>
+                        <div class="card-desc">Naučio nešto vredno</div>
                     </div>
                     <div class="card" data-field="feeling" data-value="special">
                         <div class="card-icon">&#x2B50;</div>
                         <div class="card-title">Posebno</div>
-                        <div class="card-desc">VIP tretman</div>
+                        <div class="card-desc">Kao da pripada eliti</div>
                     </div>
                 </div>
-                <div class="validation-error" id="feelingError">&#x26A0;&#xFE0F; Odaberite zeljeno osecanje</div>
+                <div class="validation-error" id="feelingError">&#x26A0;&#xFE0F; Odaberite osećaj</div>
             </div>
-
             <div class="buttons">
                 <button class="btn-prev" onclick="goToSection(1)">&#x2190; Nazad</button>
-                <button class="btn-next" onclick="goToSection(3)">Sledece &#x2192;</button>
+                <button class="btn-next" onclick="goToSection(3)">Dalje &#x2192;</button>
             </div>
         </div>
 
-        <!-- Section 3: Karakter -->
+        <!-- Section 3: Ko je vaš brend -->
         <div class="section" id="section3">
-            <div class="section-title">&#x1F3AD; Karakter Brenda</div>
-            <div class="section-subtitle">Ako bi vas brend bio osoba, kakva bi bila? (Izaberite 1 od 12 arhetipova)</div>
-
+            <div class="section-title">&#x1F3AD; Ko je vaš brend?</div>
+            <div class="section-subtitle">Da je vaš brend osoba — kakva bi bila? Izaberite jednog lika.</div>
             <div class="question">
-                <label class="question-label">Brand Arhetip:</label>
+                <label class="question-label">Karakter brenda:</label>
                 <div class="cards-grid">
                     <div class="card" data-field="archetype" data-value="innocent">
                         <div class="card-icon">&#x1F31F;</div>
-                        <div class="card-title">Innocent</div>
-                        <div class="card-desc">Optimistican, posten</div>
+                        <div class="card-title">Dobrica</div>
+                        <div class="card-desc">Veruje u najbolje</div>
                     </div>
                     <div class="card" data-field="archetype" data-value="everyman">
                         <div class="card-icon">&#x1F64B;</div>
-                        <div class="card-title">Everyman</div>
-                        <div class="card-desc">Pristupacan, iskren</div>
+                        <div class="card-title">Čovek iz naroda</div>
+                        <div class="card-desc">Prizemni, obični lik</div>
                     </div>
                     <div class="card" data-field="archetype" data-value="hero">
                         <div class="card-icon">&#x1F9B8;</div>
-                        <div class="card-title">Hero</div>
-                        <div class="card-desc">Hrabar, ambiciozan</div>
+                        <div class="card-title">Borac</div>
+                        <div class="card-desc">Sve rešava snagom</div>
                     </div>
                     <div class="card" data-field="archetype" data-value="outlaw">
                         <div class="card-icon">&#x26A1;</div>
-                        <div class="card-title">Outlaw</div>
-                        <div class="card-desc">Buntovan, disruptivan</div>
+                        <div class="card-title">Buntovnik</div>
+                        <div class="card-desc">Radi po svom</div>
                     </div>
                     <div class="card" data-field="archetype" data-value="explorer">
                         <div class="card-icon">&#x1F9ED;</div>
-                        <div class="card-title">Explorer</div>
-                        <div class="card-desc">Avanturista, slobodan</div>
+                        <div class="card-title">Istraživač</div>
+                        <div class="card-desc">Traži nove puteve</div>
                     </div>
                     <div class="card" data-field="archetype" data-value="creator">
                         <div class="card-icon">&#x1F3A8;</div>
-                        <div class="card-title">Creator</div>
-                        <div class="card-desc">Originalan, umetnik</div>
+                        <div class="card-title">Kreativac</div>
+                        <div class="card-desc">Stvara nešto novo</div>
                     </div>
                     <div class="card" data-field="archetype" data-value="ruler">
                         <div class="card-icon">&#x1F451;</div>
-                        <div class="card-title">Ruler</div>
-                        <div class="card-desc">Autoritativan, kontrolise</div>
+                        <div class="card-title">Gazda</div>
+                        <div class="card-desc">Drži sve pod kontrolom</div>
                     </div>
                     <div class="card" data-field="archetype" data-value="magician">
                         <div class="card-icon">&#x2728;</div>
-                        <div class="card-title">Magician</div>
-                        <div class="card-desc">Vizionar, transformise</div>
+                        <div class="card-title">Mađioničar</div>
+                        <div class="card-desc">Pretvara vizije u stvarnost</div>
                     </div>
                     <div class="card" data-field="archetype" data-value="lover">
                         <div class="card-icon">&#x2764;&#xFE0F;</div>
-                        <div class="card-title">Lover</div>
-                        <div class="card-desc">Strastan, intiman</div>
+                        <div class="card-title">Esteta</div>
+                        <div class="card-desc">Voli lepotu i bliskost</div>
                     </div>
                     <div class="card" data-field="archetype" data-value="caregiver">
                         <div class="card-icon">&#x1F917;</div>
-                        <div class="card-title">Caregiver</div>
-                        <div class="card-desc">Brizan, pouzdan</div>
+                        <div class="card-title">Oslonac</div>
+                        <div class="card-desc">Uvek tu da pomogne</div>
                     </div>
                     <div class="card" data-field="archetype" data-value="sage">
                         <div class="card-icon">&#x1F9D9;</div>
-                        <div class="card-title">Sage</div>
-                        <div class="card-desc">Mudar, edukator</div>
+                        <div class="card-title">Znalac</div>
+                        <div class="card-desc">Stručnjak, uči druge</div>
                     </div>
                     <div class="card" data-field="archetype" data-value="jester">
                         <div class="card-icon">&#x1F921;</div>
-                        <div class="card-title">Jester</div>
-                        <div class="card-desc">Zabavan, bezbrizan</div>
+                        <div class="card-title">Šaljivdžija</div>
+                        <div class="card-desc">Gleda vedru stranu života</div>
                     </div>
                 </div>
-                <div class="validation-error" id="archetypeError">&#x26A0;&#xFE0F; Odaberite arhetip</div>
+                <div class="validation-error" id="archetypeError">&#x26A0;&#xFE0F; Odaberite karakter</div>
             </div>
-
             <div class="buttons">
                 <button class="btn-prev" onclick="goToSection(2)">&#x2190; Nazad</button>
-                <button class="btn-next" onclick="goToSection(4)">Sledece &#x2192;</button>
+                <button class="btn-next" onclick="goToSection(4)">Dalje &#x2192;</button>
             </div>
         </div>
 
-        <!-- Section 4: Publika i Diferencijacija -->
+        <!-- Section 4: Publika i pozicioniranje -->
         <div class="section" id="section4">
-            <div class="section-title">&#x1F3AF; Publika & Pozicioniranje</div>
-            <div class="section-subtitle">Za koga radite i sto vas cini jedinstvenim?</div>
-
+            <div class="section-title">&#x1F3AF; Ko su vaši ljudi?</div>
+            <div class="section-subtitle">Za koga radite i šta vas izdvaja od konkurencije?</div>
             <div class="question">
-                <label class="question-label">Primarna ciljna publika:</label>
+                <label class="question-label">Kome se obraćate?</label>
                 <div class="cards-grid">
                     <div class="card" data-field="audience" data-value="genz">
                         <div class="card-icon">&#x1F4F1;</div>
-                        <div class="card-title">Digitalni Domoroci</div>
-                        <div class="card-desc">Gen Z, Millennials</div>
+                        <div class="card-title">Mladi i onlajn</div>
+                        <div class="card-desc">Gen Z, milenijalci</div>
                     </div>
                     <div class="card" data-field="audience" data-value="professional">
                         <div class="card-icon">&#x1F4BC;</div>
-                        <div class="card-title">Profesionalci</div>
-                        <div class="card-desc">B2B, Korporacije</div>
+                        <div class="card-title">Firme i profesionalci</div>
+                        <div class="card-desc">Poslovne usluge, korporacije</div>
                     </div>
                     <div class="card" data-field="audience" data-value="luxury">
                         <div class="card-icon">&#x1F48E;</div>
-                        <div class="card-title">Premium Segment</div>
-                        <div class="card-desc">Visoka kupovna moc</div>
+                        <div class="card-title">Vrh ponude</div>
+                        <div class="card-desc">Visoka kupovna moć</div>
                     </div>
                     <div class="card" data-field="audience" data-value="family">
                         <div class="card-icon">&#x1F468;&#x200D;&#x1F469;&#x200D;&#x1F467;</div>
                         <div class="card-title">Porodice</div>
-                        <div class="card-desc">Roditelji, bezbednost</div>
+                        <div class="card-desc">Roditelji, sigurnost, toplina</div>
                     </div>
                 </div>
-                <div class="validation-error" id="audienceError">&#x26A0;&#xFE0F; Odaberite primarnu publiku</div>
+                <div class="validation-error" id="audienceError">&#x26A0;&#xFE0F; Odaberite publiku</div>
             </div>
-
             <div class="question">
-                <label class="question-label">Vasa glavna konkurentska prednost:</label>
+                <label class="question-label">Šta vas izdvaja?</label>
                 <div class="cards-grid">
                     <div class="card" data-field="advantage" data-value="innovation">
                         <div class="card-icon">&#x1F680;</div>
                         <div class="card-title">Inovacija</div>
-                        <div class="card-desc">Prvi na trzistu</div>
+                        <div class="card-desc">Prvi na tržištu</div>
                     </div>
                     <div class="card" data-field="advantage" data-value="premium">
                         <div class="card-icon">&#x1F451;</div>
-                        <div class="card-title">Premium Kvalitet</div>
+                        <div class="card-title">Vrhunski kvalitet</div>
                         <div class="card-desc">Luksuz, ekskluzivnost</div>
                     </div>
                     <div class="card" data-field="advantage" data-value="affordability">
                         <div class="card-icon">&#x1F4B0;</div>
-                        <div class="card-title">Pristupacnost</div>
-                        <div class="card-desc">Best value</div>
+                        <div class="card-title">Dostupnost</div>
+                        <div class="card-desc">Najbolja vrednost za cenu</div>
                     </div>
                     <div class="card" data-field="advantage" data-value="expertise">
                         <div class="card-icon">&#x1F393;</div>
-                        <div class="card-title">Ekspertiza</div>
-                        <div class="card-desc">Duboko znanje</div>
+                        <div class="card-title">Znanje i iskustvo</div>
+                        <div class="card-desc">Duboko poznavanje oblasti</div>
                     </div>
                 </div>
                 <div class="validation-error" id="advantageError">&#x26A0;&#xFE0F; Odaberite prednost</div>
             </div>
-
             <div class="question">
-                <label class="question-label">Ton komunikacije:</label>
+                <label class="question-label">Kako pričate sa klijentima?</label>
                 <div class="slider-container">
                     <div class="slider-row">
                         <div class="slider-label">
-                            <span>&#x1F917; Prijateljski</span>
-                            <span>&#x1F3A9; Autoritativan</span>
+                            <span>&#x1F917; Opušteno</span>
+                            <span>&#x1F3A9; Ozbiljno</span>
                         </div>
                         <input type="range" id="toneSlider" min="1" max="5" value="3" oninput="updateSliderValue('tone', this.value)">
                         <span class="slider-value" id="toneValue">Balansiran ton (3/5)</span>
                     </div>
                 </div>
             </div>
-
             <div class="buttons">
                 <button class="btn-prev" onclick="goToSection(3)">&#x2190; Nazad</button>
-                <button class="btn-next" onclick="goToSection(5)">Sledece &#x2192;</button>
+                <button class="btn-next" onclick="goToSection(5)">Dalje &#x2192;</button>
             </div>
         </div>
 
         <!-- Section 5: Materijal -->
         <div class="section" id="section5">
-            <div class="section-title">&#x1F3A8; Senzorno Sidro</div>
-            <div class="section-subtitle">Koji materijal najbolje reprezentuje energiju vaseg brenda?</div>
-
+            <div class="section-title">&#x1F3A8; Kakav je osećaj pod prstima?</div>
+            <div class="section-subtitle">Zamislite da vaš brend možete da dodirnete — koji materijal bi to bio?</div>
             <div class="question">
-                <label class="question-label">Materijal identiteta:</label>
+                <label class="question-label">Materijal koji opisuje vaš brend:</label>
                 <div class="cards-grid">
                     <div class="card" data-field="material" data-value="concrete">
                         <div class="card-icon">&#x1F3D7;&#xFE0F;</div>
-                        <div class="card-title">Polirani Beton</div>
+                        <div class="card-title">Polirani beton</div>
                         <div class="card-desc">Snaga, stabilnost</div>
                     </div>
                     <div class="card" data-field="material" data-value="linen">
                         <div class="card-icon">&#x1F33E;</div>
-                        <div class="card-title">Meki Lan</div>
+                        <div class="card-title">Meki lan</div>
                         <div class="card-desc">Prirodno, toplo</div>
                     </div>
                     <div class="card" data-field="material" data-value="steel">
                         <div class="card-icon">&#x2699;&#xFE0F;</div>
-                        <div class="card-title">Bruseni Celik</div>
-                        <div class="card-desc">Preciznost, tech</div>
+                        <div class="card-title">Brušeni čelik</div>
+                        <div class="card-desc">Preciznost, tehnologija</div>
                     </div>
                     <div class="card" data-field="material" data-value="glass">
                         <div class="card-icon">&#x1F48E;</div>
-                        <div class="card-title">Mat Staklo</div>
+                        <div class="card-title">Mat staklo</div>
                         <div class="card-desc">Transparentnost, elegancija</div>
                     </div>
                     <div class="card" data-field="material" data-value="wood">
                         <div class="card-icon">&#x1FAB5;</div>
-                        <div class="card-title">Prirodno Drvo</div>
-                        <div class="card-desc">Toplina, autenticnost</div>
+                        <div class="card-title">Prirodno drvo</div>
+                        <div class="card-desc">Toplina, autentičnost</div>
                     </div>
                     <div class="card" data-field="material" data-value="marble">
                         <div class="card-icon">&#x2B1C;</div>
-                        <div class="card-title">Mermerni Kamen</div>
+                        <div class="card-title">Mermerni kamen</div>
                         <div class="card-desc">Luksuz, trajnost</div>
                     </div>
                 </div>
                 <div class="validation-error" id="materialError">&#x26A0;&#xFE0F; Odaberite materijal</div>
             </div>
-
             <div class="buttons">
                 <button class="btn-prev" onclick="goToSection(4)">&#x2190; Nazad</button>
-                <button class="btn-next" onclick="goToSection(6)">Sledece &#x2192;</button>
+                <button class="btn-next" onclick="goToSection(6)">Dalje &#x2192;</button>
             </div>
         </div>
 
-        <!-- Section 6: Skaleri -->
+        <!-- Section 6: Parametri dizajna -->
         <div class="section" id="section6">
-            <div class="section-title">&#x2696;&#xFE0F; Fino Podesavanje</div>
-            <div class="section-subtitle">Definisi vizuelni karakter kroz skalere (1 = Levo, 5 = Desno)</div>
-
+            <div class="section-title">&#x2696;&#xFE0F; Fino podešavanje</div>
+            <div class="section-subtitle">Pomerajte klizače da definišete vizuelni karakter brenda</div>
             <div class="question">
-                <label class="question-label">Dizajn Parametri:</label>
+                <label class="question-label">Parametri dizajna:</label>
                 <div class="slider-container">
                     <div class="slider-row">
                         <div class="slider-label">
@@ -1123,7 +1106,7 @@
 
                     <div class="slider-row">
                         <div class="slider-label">
-                            <span>&#x1F91D; Pristupacno</span>
+                            <span>&#x1F91D; Pristupačno</span>
                             <span>&#x1F48E; Ekskluzivno</span>
                         </div>
                         <input type="range" id="approachSlider" min="1" max="5" value="3" oninput="updateSliderValue('approach', this.value)">
@@ -1132,33 +1115,44 @@
 
                     <div class="slider-row">
                         <div class="slider-label">
-                            <span>&#x2B55; Meko (Oblo)</span>
-                            <span>&#x2B1B; Ostro (Geometrija)</span>
+                            <span>&#x2B55; Zaobljene ivice</span>
+                            <span>&#x2B1B; Oštre ivice</span>
                         </div>
                         <input type="range" id="designSlider" min="1" max="5" value="3" oninput="updateSliderValue('design', this.value)">
-                        <span class="slider-value" id="designValue">Kombinirani oblici (3/5)</span>
+                        <span class="slider-value" id="designValue">Kombinovano (3/5)</span>
                     </div>
 
                     <div class="slider-row">
                         <div class="slider-label">
                             <span>&#x1F54A;&#xFE0F; Mirno</span>
-                            <span>&#x26A1; Energicno</span>
+                            <span>&#x26A1; Energično</span>
                         </div>
                         <input type="range" id="dynamicSlider" min="1" max="5" value="3" oninput="updateSliderValue('dynamic', this.value)">
                         <span class="slider-value" id="dynamicValue">Umerena energija (3/5)</span>
                     </div>
+
+                    <div class="slider-row">
+                        <div class="slider-label">
+                            <span>&#x2600;&#xFE0F; Bez senki</span>
+                            <span>&#x1F30C; Duboke senke</span>
+                        </div>
+                        <input type="range" id="shadowSlider" min="1" max="5" value="3" oninput="updateSliderValue('shadow', this.value)">
+                        <span class="slider-value" id="shadowValue">Umerene senke (3/5)</span>
+                    </div>
                 </div>
             </div>
-
             <div class="buttons">
                 <button class="btn-prev" onclick="goToSection(5)">&#x2190; Nazad</button>
-                <button class="btn-next" onclick="generateBrand()">&#x1F916; AI Generisi Brend Identitet</button>
+                <button class="btn-next" onclick="generateBrand()">&#x2728; Napravi mi brend</button>
             </div>
         </div>
 
         <!-- Brand Page -->
         <div class="brand-page" id="brandPage">
             <div id="brandContent"></div>
+        </div>
+        <div style="text-align:center;padding:16px 0 8px;font-size:12px;color:#aaa;font-family:system-ui,sans-serif;">
+            Kreirala <a href="https://www.ivanadimitrijevic.rs" target="_blank" style="color:#999;text-decoration:underline;">Ivana Dimitrijević</a>
         </div>
     </div>
 
@@ -1216,22 +1210,33 @@
 
             getGeometry: (v) => {
                 const levels = {
-                    1: "Potpuno organski - meke linije, prirodni oblici, zaobljeni elementi, prirodni motivi (biofilija), tečni oblici, zakrivljenost ivica: 32px+",
-                    2: "Uglavnom meko - zaobljeni oblici dominiraju, retko pravo, empatija i toplina, zakrivljenost ivica: 20-24px",
-                    3: "Mešovita geometrija - balans zaobljenih i pravih, profesionalan ali ljudski, zakrivljenost ivica: 12-16px",
-                    4: "Uglavnom geometrijsko - čiste linije, struktura dominira, malo zaobljenih elemenata, zakrivljenost ivica: 6-8px",
-                    5: "Snažan brutalistički stil sa oštrim ivicama - isključivo oštre ivice, minimalna zakrivljenost, precizni uglovi, zakrivljenost ivica: 0-4px"
+                    1: "Sve zaobljeno - meke linije, prirodni oblici, tečne forme, zaobljenost ivica: 32px+",
+                    2: "Uglavnom meko - zaobljeni oblici dominiraju, toplina i empatija, zaobljenost ivica: 20-24px",
+                    3: "Kombinacija zaobljenog i ravnog - profesionalno ali ljudski, zaobljenost ivica: 12-16px",
+                    4: "Uglavnom geometrijsko - čiste linije, struktura, malo zaobljenih elemenata, zaobljenost ivica: 6-8px",
+                    5: "Oštre ivice svuda - brutalistički, precizni uglovi, minimalna zaobljenost, zaobljenost ivica: 0-4px"
                 };
                 return levels[v] || levels[3];
             },
 
             getEnergy: (v) => {
                 const levels = {
-                    1: "Zen mirnoća - maksimalan prazan prostor (belina 48px+), lagani prelazi (800ms+), meke senke, meditativno",
-                    2: "Opuštena energija - dosta prostora (belina 32px), glatki prelazi (500ms), difuzne senke",
-                    3: "Umerena profesionalna dinamika - balansiran razmak (24px), standardni prelazi (300ms), definirane senke",
-                    4: "Visoka energija - kompaktan razmak (16px), brzi prelazi (200ms), oštre senke, orijentisan ka pokretu",
-                    5: "Ekstreman tempo - minimalan razmak (8-12px), trenutni prelazi (100ms), oštre senke, konstantan pokret"
+                    1: "Potpuni mir - maksimalan prazan prostor (belina 48px+), lagani prelazi (800ms+), meditativno",
+                    2: "Opuštena energija - dosta prostora (belina 32px), glatki prelazi (500ms)",
+                    3: "Umerena dinamika - balansiran razmak (24px), standardni prelazi (300ms)",
+                    4: "Visoka energija - kompaktan razmak (16px), brzi prelazi (200ms), orijentisano ka pokretu",
+                    5: "Ekstreman tempo - minimalan razmak (8-12px), trenutni prelazi (100ms), konstantan pokret"
+                };
+                return levels[v] || levels[3];
+            },
+
+            getShadow: (v) => {
+                const levels = {
+                    1: "Bez senki - ravan dizajn, čist i minimalan, bez dubine",
+                    2: "Jedva vidljive senke - suptilan 3D efekat, box-shadow: 0 2px 8px rgba(0,0,0,0.04)",
+                    3: "Umerene senke - profesionalna dubina, box-shadow: 0 4px 16px rgba(0,0,0,0.08)",
+                    4: "Izražene senke - jasna dubina i slojevi, box-shadow: 0 8px 24px rgba(0,0,0,0.12)",
+                    5: "Duboke senke - dramatičan 3D efekat, box-shadow: 0 12px 40px rgba(0,0,0,0.18)"
                 };
                 return levels[v] || levels[3];
             },
@@ -1276,10 +1281,10 @@
             }[a] || 'Kvalitet'),
 
             getIndustry: (c) => ({
-                'tech': 'Tehnološka industrija - softver kao usluga (SaaS), IT usluge, digitalni proizvodi, startapi',
-                'consulting': 'Konsalting i edukacija - mentorstvo, obuke, kursevi, stručno vođenje',
-                'products': 'Elektronska trgovina i fizički proizvodi - stil života, moda, potrošačka dobra',
-                'services': 'Profesionalne usluge - poslovna saradnja, agencije, zanatstvo, trgovina'
+                'tech': 'Tehnologija — digitalni proizvodi, aplikacije, onlajn alati',
+                'consulting': 'Mentorstvo i edukacija — obuke, kursevi, stručno vođenje',
+                'products': 'Onlajn prodaja i proizvodi — stil života, moda, potrošačka dobra',
+                'services': 'Poslovne usluge — agencije, zanatstvo, saradnja sa firmama'
             }[c] || 'Opšta delatnost')
         };
 
@@ -1307,11 +1312,12 @@
 
         function updateSliderValue(type, value) {
             const descriptions = {
-                tone: ['Prijateljski (1)', 'Opušteno (2)', 'Balansiran (3)', 'Profesionalan (4)', 'Autoritativan (5)'],
+                tone: ['Opušteno (1)', 'Prijateljski (2)', 'Balansiran (3)', 'Profesionalan (4)', 'Ozbiljno (5)'],
                 style: ['Tradicionalno (1)', 'Klasično (2)', 'Umereno (3)', 'Moderno (4)', 'Inovativno (5)'],
                 approach: ['Pristupačno (1)', 'Široko dostupno (2)', 'Profesionalno (3)', 'Selektivno (4)', 'Ekskluzivno (5)'],
-                design: ['Vrlo oblo (1)', 'Meko (2)', 'Kombinovano (3)', 'Geometrijsko (4)', 'Vrlo oštro (5)'],
-                dynamic: ['Potpuni mir (1)', 'Smireno (2)', 'Umereno (3)', 'Energično (4)', 'Visoka energija (5)']
+                design: ['Potpuno zaobljeno (1)', 'Meke ivice (2)', 'Kombinovano (3)', 'Geometrijsko (4)', 'Oštre ivice (5)'],
+                dynamic: ['Potpuni mir (1)', 'Smireno (2)', 'Umereno (3)', 'Energično (4)', 'Visoka energija (5)'],
+                shadow: ['Bez senki (1)', 'Jedva vidljive (2)', 'Umerene senke (3)', 'Izražene senke (4)', 'Duboke senke (5)']
             };
 
             const valueEl = document.getElementById(type + 'Value');
@@ -1440,23 +1446,23 @@
             formData.approachSlider = parseInt(document.getElementById('approachSlider').value);
             formData.designSlider = parseInt(document.getElementById('designSlider').value);
             formData.dynamicSlider = parseInt(document.getElementById('dynamicSlider').value);
+            formData.shadowSlider = parseInt(document.getElementById('shadowSlider').value);
             formData.toneSlider = parseInt(document.getElementById('toneSlider').value);
 
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById('brandPage').classList.add('active');
             document.getElementById('brandContent').innerHTML = `
                 <div class="loading-state">
-                    <div class="loading-spinner">&#x1F916;</div>
-                    <div class="loading-text">AI analizira vašu brand strategiju...</div>
+                    <div class="loading-spinner">&#x2728;</div>
+                    <div class="loading-text">Samo sekund, AI slaže kockice za vaš brend...</div>
                     <div class="loading-sub">
-                        <strong>Wheeler-ova Arhitektura Identiteta Brenda</strong><br><br>
-                        AI trenutno:<br>
-                        &bull; Analizira transformaciju klijenta i psihološki profil<br>
-                        &bull; Prevodi strategiju u vizuelne direktive (OBLIK &rarr; BOJA)<br>
-                        &bull; Generiše paletu od 5 boja sa provером pristupačnosti (WCAG)<br>
-                        &bull; Definiše tipografsku hijerarhiju i specifikacije interfejsa<br>
-                        &bull; Kreira prompt za generisanje logotipa (ChatGPT / Gemini)<br><br>
-                        <em>Proces može trajati 20-40 sekundi...</em>
+                        Evo šta radi u pozadini:<br><br>
+                        &bull; Čita karakter i priču vašeg brenda<br>
+                        &bull; Bira oblike i ivice, pa onda boje<br>
+                        &bull; Sastavlja paletu od 5 boja koje imaju smisla zajedno<br>
+                        &bull; Bira fontove i podešava tipografiju<br>
+                        &bull; Piše prompt za logo (za ChatGPT / Gemini)<br><br>
+                        <em>Ovo može potrajati 20-40 sekundi...</em>
                     </div>
                 </div>
             `;
@@ -1494,123 +1500,91 @@
                 approachDesc: brandTranslator.getApproach(formData.approachSlider),
                 geometryDesc: brandTranslator.getGeometry(formData.designSlider),
                 energyDesc: brandTranslator.getEnergy(formData.dynamicSlider),
+                shadowDesc: brandTranslator.getShadow(formData.shadowSlider),
                 toneDesc: brandTranslator.getTone(formData.toneSlider)
             };
 
-            const prompt = `Ti si vodeći direktor brendinga sa 15+ godina iskustva. Kreiraj Nacrt vizuelnog identiteta prateći Wheeler-ov proces - PRVO OBLIK, ZATIM BOJA.
-
-VAŽNO: Svi odgovori MORAJU biti na SRPSKOM jeziku, uključujući i logo prompt (koristi se za ChatGPT / Gemini koji razumeju srpski).
-
-═══════════════════════════════════════════════════════════
-STRATEŠKI FUNDAMENT (Wheeler Faza 1-2)
-═══════════════════════════════════════════════════════════
-
-OSNOVNI IDENTITET:
-• Brend: ${fullContext.name}
-• Industrija: ${fullContext.industry}
-• Misija: ${fullContext.mission}
-
-CILJNA PUBLIKA:
-${fullContext.audience}
-
-EMOCIONALNA TRANSFORMACIJA:
-Klijent prolazi kroz: ${fullContext.transformation}
-Osećaj nakon interakcije: ${fullContext.feeling}
-
-KARAKTER BRENDA:
-• Arhetip: ${fullContext.archetype}
-• Ton komunikacije: ${fullContext.toneDesc}
-• Konkurentska prednost: ${fullContext.advantage}
-
-VIZIJA KLIJENTA (Primarne instrukcije):
+            const prompt = `Ti si iskusan brend dizajner. Klijent ti je upravo ispričao sve o svom brendu — tvoj posao je da od toga napraviš vizuelni identitet koji ima smisla. Radi po Wheeler-ovom procesu: PRVO oblik, PA ONDA boja.
+SVE piši na SRPSKOM jeziku, uključujući logo prompt (koristi se za ChatGPT / Gemini).
+───────────────────────────────────────
+O BRENDU
+───────────────────────────────────────
+Ime: ${fullContext.name}
+Čime se bave: ${fullContext.industry}
+U čemu su najbolji: ${fullContext.mission}
+Kome se obraćaju: ${fullContext.audience}
+Šta se dešava sa klijentom: ${fullContext.transformation}
+Kako se oseća posle: ${fullContext.feeling}
+Karakter brenda: ${fullContext.archetype}
+Kako pričaju: ${fullContext.toneDesc}
+Šta ih izdvaja: ${fullContext.advantage}
+Šta klijent želi (svojim rečima):
 ${fullContext.vision}
-
-═══════════════════════════════════════════════════════════
-DIZAJN LOGIKA (Wheeler Faza 3 - REDOSLED: OBLIK → BOJA)
-═══════════════════════════════════════════════════════════
-
-1. OBLIK (Primarni identifikator):
-   ${fullContext.geometryDesc}
-
-2. MATERIJALNOST (Senzorno sidro):
-   ${fullContext.material} - Kako ovaj materijal definiše teksturu, težinu i taktilnost?
-
-3. STIL (Vremenski kontekst):
-   ${fullContext.styleDesc}
-
-4. PRISTUP (Društveno pozicioniranje):
-   ${fullContext.approachDesc}
-
-5. DINAMIKA (Energetski ritam):
-   ${fullContext.energyDesc}
-
-═══════════════════════════════════════════════════════════
-ZADATAK: GENERISATI KOMPLETAN SISTEM BRENDA
-═══════════════════════════════════════════════════════════
-
-Izradi JSON sa sledećom strukturom (ISKLJUČIVO JSON, bez markdown):
-
+───────────────────────────────────────
+DIZAJN SMERNICE (Wheeler: oblik → boja)
+───────────────────────────────────────
+Ivice i oblici: ${fullContext.geometryDesc}
+Materijal (zamislite da možete dodirnuti brend): ${fullContext.material}
+Stil: ${fullContext.styleDesc}
+Pozicioniranje: ${fullContext.approachDesc}
+Energija i tempo: ${fullContext.energyDesc}
+Senke: ${fullContext.shadowDesc}
+───────────────────────────────────────
+ZADATAK
+───────────────────────────────────────
+Napravi JSON sa ovom strukturom (SAMO JSON, bez markdown):
 {
-  "uniquenessStatement": "Mi smo jedini [industrija] koji [konkurentska prednost] za [ciljna publika].",
-
-  "brandEssence": "Srž brenda u 5-7 reči - destilacija celog identiteta",
-
+  "uniquenessStatement": "Jedna rečenica — zašto je ${fullContext.name} jedinstven na tržištu.",
+  "brandEssence": "Srž brenda u 5-7 reči",
   "colorSystem": {
-    "identity": "#HEX (SAMO hex kod, bez teksta - Primarna boja identiteta)",
-    "support": "#HEX (SAMO hex kod, bez teksta - Sekundarna boja podrške)",
-    "action": "#HEX (SAMO hex kod, bez teksta - Boja akcije)",
-    "light": "#HEX (SAMO hex kod, bez teksta - Svetla boja pozadine)",
-    "dark": "#HEX (SAMO hex kod, bez teksta - Tamna boja teksta)",
-    "reasoning": "Detaljno objašnjenje NA SRPSKOM (3-4 rečenice): Kako boje podržavaju emocionalnu transformaciju (${fullContext.transformation}), arhetip (${fullContext.archetype}), i materijalnost (${fullContext.material})."
+    "identity": "#HEX (samo hex — glavna boja brenda)",
+    "support": "#HEX (samo hex — pomoćna boja)",
+    "action": "#HEX (samo hex — boja za dugmad i poziv na akciju)",
+    "light": "#HEX (samo hex — svetla pozadina)",
+    "dark": "#HEX (samo hex — tamna boja za tekst)",
+    "reasoning": "Objasni NA SRPSKOM u 3-4 rečenice: zašto baš ove boje? Kako podržavaju transformaciju (${fullContext.transformation}), karakter (${fullContext.archetype}) i materijal (${fullContext.material})."
   },
-
   "usageMatrix": {
-    "identity": "Pravila primene PRIMARNE boje - konkretni primeri (navigacija, glavna sekcija, primarni naslovi...)",
-    "support": "Pravila primene SEKUNDARNE boje - konkretni primeri (kartice, preporuke klijenata, sekundarne sekcije...)",
-    "action": "KRITIČNO: Boja akcije se koristi ISKLJUČIVO za dugmad poziva na radnju i konverzione elemente. Zabranjena je za dekoraciju.",
-    "typography": "Precizna hijerarhija sa veličinama: Glavni naslov (px/težina), H1 (px/težina), H2 (px/težina), Telo teksta (px/težina), Natpis (px/težina)"
+    "identity": "Gde ide glavna boja — konkretni primeri (navigacija, hero sekcija, naslovi...)",
+    "support": "Gde ide pomoćna — konkretni primeri (kartice, pozadine sekcija, citati...)",
+    "action": "VAŽNO: Boja akcije je SAMO za dugmad i konverzione elemente. Nikad za dekoraciju.",
+    "typography": "Veličine i težine: Hero naslov (px/weight), H1, H2, telo teksta, natpis — konkretne vrednosti"
   },
-
   "typography": {
-    "headline": "Google Font naziv za naslove - MORA biti pravi Google Font",
-    "body": "Google Font naziv za telo teksta - MORA biti pravi Google Font",
-    "usage": "Detaljno: Glavni naslov veličina i težina, H1, H2, H3, Telo teksta, Natpis - sa konkretnim px i weight vrednostima"
+    "headline": "Ime Google Fonta za naslove — mora postojati na Google Fonts",
+    "body": "Ime Google Fonta za tekst — mora postojati na Google Fonts",
+    "usage": "Konkretno: Hero naslov veličina/težina, H1, H2, H3, telo teksta, natpis — px i weight"
   },
-
   "uiSpecs": {
-    "borderRadius": "TAČNA CSS vrednost u px na osnovu opisa geometrije - npr. '32px' za organsko, '4px' za oštro",
-    "shadowStyle": "TAČAN CSS box-shadow na osnovu opisa energije - npr. '0 8px 24px rgba(0,0,0,0.08)' za mirno, '0 4px 12px rgba(0,0,0,0.15)' za energično",
-    "spacingUnits": "TAČNA osnovna jedinica razmaka - npr. '48px' za zen mirnoću, '16px' za visoku energiju",
-    "description": "Kako elementi korisničkog interfejsa izgledaju na ${fullContext.material} materijalu - konkretna vizualizacija NA SRPSKOM (2-3 rečenice)"
+    "borderRadius": "CSS vrednost u px prema ivicama — npr. '32px' za zaobljeno, '4px' za oštro",
+    "shadowStyle": "CSS box-shadow prema senki klizaču — npr. '0 8px 24px rgba(0,0,0,0.08)' ili 'none'",
+    "spacingUnits": "Osnovna jedinica razmaka — npr. '48px' za mir, '16px' za energiju",
+    "description": "Kako bi izgledao interfejs od ${fullContext.material} materijala? Opiši na srpskom u 2-3 rečenice."
   },
-
   "guidelines": {
     "dos": [
-      "Pravilo 1 - Konkretna instrukcija šta UVEK činiti",
-      "Pravilo 2 - Konkretna instrukcija",
-      "Pravilo 3 - Konkretna instrukcija"
+      "Konkretno pravilo šta UVEK raditi",
+      "Još jedno pravilo",
+      "I treće"
     ],
     "donts": [
-      "Zabrana 1 - Konkretna instrukcija šta NIKADA ne činiti",
-      "Zabrana 2 - Konkretna instrukcija",
-      "Zabrana 3 - Konkretna instrukcija"
+      "Šta NIKAD ne raditi",
+      "Druga zabrana",
+      "Treća zabrana"
     ],
     "always": [
-      "Zlatno pravilo koje nikad ne smeš prekršiti - NAJVAŽNIJI princip brenda"
+      "Zlatno pravilo brenda — ovo se nikad ne krši"
     ]
   },
-
-  "logoConceptPrompt": "Dizajniraj profesionalnu prezentaciju logotipa sa 4 varijacije na beloj pozadini: [1] Piktogram — simbolička ikona bez teksta, [2] Minimalistički wordmark — fokus na tipografiju, [3] Kombinovani logo — ikona + tekst integrisani, [4] Favicon — pojednostavljen za male dimenzije. Dizajn inspirisan arhetipom ${fullContext.archetype}, geometrija: ${fullContext.geometryDesc}, primarna boja identiteta brenda ${fullContext.name}. Vizija klijenta: ${fullContext.vision}. Studijsko osvetljenje, ultra visok kvalitet, prezentacija za portfolio brending agencije. Format 16:9, fotorealistična vizualizacija."
+  "logoConceptPrompt": "Dizajniraj čist, profesionalan logotip za sajt, sa 4 varijacije na beloj pozadini: [1] Ikona — simbol bez teksta, [2] Wordmark — samo tipografija, [3] Kombinacija — ikona + tekst, [4] Favicon — pojednostavljen za male dimenzije. Stil: moderan sajt, ne umetnička ilustracija. Visok kontrast dugmadi, čist layout. Inspirisan arhetipom ${fullContext.archetype}, ivice: ${fullContext.geometryDesc}, boja brenda ${fullContext.name}. Vizija klijenta: ${fullContext.vision}. Format 16:9, studijsko osvetljenje, kvalitet za portfolio."
 }
-
-KRITIČNA PRAVILA:
-1. PRVO analiziraj OBLIK (opis geometrije), ZATIM izvedi BOJU iz oblika i materijala
-2. Boja akcije MORA imati odnos kontrasta >7:1 sa svetlom bojom (WCAG AAA)
-3. Sve boje moraju resonovati sa "${fullContext.feeling}" osećanjem
-4. Svi Google Font nazivi moraju biti TAČNI i postojati
-5. Specifikacije korisničkog interfejsa moraju biti KONKRETNE CSS vrednosti koje direktno odgovaraju nivoima klizača
-6. Prompt za logo mora biti kompletan i renderljiv sa konkretnim bojama
-7. Sav tekst (reasoning, guidelines, usageMatrix, description) MORA biti na srpskom jeziku`;
+PRAVILA:
+1. PRVO oblik (ivice, geometrija), PA ONDA boja iz oblika i materijala
+2. Boja akcije mora biti čitljiva na svetloj pozadini — dobar kontrast, da se dugme vidi
+3. Boje moraju da prenose osećaj: "${fullContext.feeling}"
+4. Google Font imena moraju TAČNO postojati
+5. CSS vrednosti (border-radius, box-shadow, spacing) moraju biti konkretne i odgovarati klizačima
+6. SVE na srpskom jeziku`;
 
             const response = await fetch("https://api.anthropic.com/v1/messages", {
                 method: "POST",
@@ -1811,7 +1785,7 @@ KRITIČNA PRAVILA:
                 <section class="brand-logo-section" style="background:${sc.dark};">
                     <div class="brand-logo-inner">
                         <h2 style="font-family:'${safeHeadline}',sans-serif;color:${sc.light};font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 16px;">Vizuelni koncept</h2>
-                        <p style="font-family:'${safeBody}',sans-serif;color:${sc.light};opacity:0.6;font-size:16px;margin:0 0 36px;">Prompt za generisanje logotipa (ChatGPT / Gemini Nano Banana)</p>
+                        <p style="font-family:'${safeBody}',sans-serif;color:${sc.light};opacity:0.6;font-size:16px;margin:0 0 36px;">Kopirajte ovaj prompt u ChatGPT ili Gemini da generišete logo</p>
                         <div style="background:${sc.dark};border:1px solid ${sc.light}20;padding:32px;border-radius:${br};font-family:'Courier New',monospace;font-size:14px;line-height:1.8;color:${sc.light};opacity:0.85;text-align:left;max-width:800px;margin:0 auto;white-space:pre-wrap;">${safeLogoPrompt}</div>
                     </div>
                 </section>
@@ -1827,6 +1801,7 @@ KRITIČNA PRAVILA:
                             <span style="width:24px;height:24px;border-radius:50%;background:${sc.light};display:inline-block;"></span>
                             <span style="width:24px;height:24px;border-radius:50%;background:${sc.dark};border:2px solid ${sc.light}40;display:inline-block;"></span>
                         </div>
+                        <p style="font-family:'${safeBody}',sans-serif;font-size:12px;opacity:0.5;margin-top:20px;">Kreirala <a href="https://www.ivanadimitrijevic.rs" target="_blank" style="color:inherit;text-decoration:underline;">Ivana Dimitrijević</a></p>
                     </div>
                 </footer>
 
