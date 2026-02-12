@@ -994,6 +994,16 @@
                         <div class="card-title">Porodice</div>
                         <div class="card-desc">Roditelji, sigurnost, toplina</div>
                     </div>
+                    <div class="card" data-field="audience" data-value="solopreneur">
+                        <div class="card-icon">&#x1F680;</div>
+                        <div class="card-title">Solopreduzetnici i frilanseri</div>
+                        <div class="card-desc">Sami grade svoj posao, traže autentičnost.</div>
+                    </div>
+                    <div class="card" data-field="audience" data-value="employee">
+                        <div class="card-icon">&#x1F454;</div>
+                        <div class="card-title">Zaposleni i pojedinci</div>
+                        <div class="card-desc">Ljudi koji traže lični razvoj, balans ili promenu.</div>
+                    </div>
                 </div>
                 <div class="validation-error" id="audienceError">&#x26A0;&#xFE0F; Odaberite publiku</div>
             </div>
@@ -1266,7 +1276,9 @@
                 'genz': 'Digitalni domoroci (Gen Z, Milenijalci) - cene autentičnost, brzinu, vizuelnu komunikaciju, društveni uticaj',
                 'professional': 'Poslovni profesionalci - cene efikasnost, povraćaj ulaganja, dokaze, konkretne rezultate',
                 'luxury': 'Klijenti visoke platežne moći - cene ekskluzivnost, status, personalizaciju',
-                'family': 'Porodice i roditelji - cene sigurnost, poverenje, stabilnost, dugoročnost'
+                'family': 'Porodice i roditelji - cene sigurnost, poverenje, stabilnost, dugoročnost',
+                'solopreneur': 'Solopreduzetnici i frilanseri - sami grade posao, cene autentičnost, fleksibilnost i lični brend',
+                'employee': 'Zaposleni i pojedinci - traže lični razvoj, balans između posla i života, ili promenu karijere'
             }[a] || 'Široka publika - različite demografske grupe'),
 
             getTransformation: (t) => ({
@@ -1744,10 +1756,10 @@ PRAVILA:
             };
             document.head.appendChild(link);
 
-            // Sticker helper: small annotation box
+            // Sticker helper: small annotation box in ACTION color
             const sticker = (text, pos) => {
                 if (!text) return '';
-                return `<div style="position:absolute;${pos};background:${sc.dark};color:${sc.light};font-family:'${safeBody}',sans-serif;font-size:12px;line-height:1.5;padding:10px 14px;border-radius:8px;max-width:260px;box-shadow:${shadow !== 'none' ? shadow : '0 4px 16px rgba(0,0,0,0.12)'};z-index:10;pointer-events:none;">
+                return `<div style="position:absolute;${pos};background:${sc.action};color:white;font-family:'${safeBody}',sans-serif;font-size:12px;line-height:1.5;padding:10px 14px;border-radius:8px;max-width:260px;box-shadow:0 4px 16px rgba(0,0,0,0.15);z-index:10;pointer-events:none;">
                     <span style="font-weight:700;display:block;margin-bottom:2px;">&#x1F4CC; Dizajnerska napomena</span>${text}
                 </div>`;
             };
@@ -1803,7 +1815,7 @@ PRAVILA:
                 </div>
 
                 <!-- COLOR STORY + STICKER -->
-                <section class="brand-story" style="background:${sc.light};position:relative;">
+                <section class="brand-story" style="background:#FFFFFF;position:relative;">
                     <div class="brand-story-inner">
                         <h2 style="font-family:'${safeHeadline}',sans-serif;color:${sc.identity};font-size:clamp(28px,4vw,48px);font-weight:900;margin:0 0 32px;letter-spacing:-1px;">Priča iza boja</h2>
                         <p style="font-family:'${safeBody}',sans-serif;color:${sc.dark};font-size:20px;line-height:1.9;opacity:0.85;max-width:750px;">${safeReasoning}</p>
@@ -1811,8 +1823,8 @@ PRAVILA:
                     ${sticker(safeLegBoja, 'bottom:20px;right:20px')}
                 </section>
 
-                <!-- SERVICES MOCKUP (60% light, 30% support accents) -->
-                <section style="background:${sc.light};padding:100px 40px;position:relative;">
+                <!-- SERVICES MOCKUP -->
+                <section style="background:#FFFFFF;padding:100px 40px;position:relative;">
                     <div style="max-width:900px;margin:0 auto;">
                         <h2 style="font-family:'${safeHeadline}',sans-serif;color:${sc.dark};font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 16px;letter-spacing:-1px;">Šta radimo</h2>
                         <p style="font-family:'${safeBody}',sans-serif;color:${sc.dark};opacity:0.6;font-size:18px;margin:0 0 48px;">${safeUiDesc}</p>
@@ -1838,7 +1850,7 @@ PRAVILA:
                 </section>
 
                 <!-- TYPOGRAPHY CHARTER -->
-                <section class="brand-typo-section" style="background:${sc.support}08;">
+                <section class="brand-typo-section" style="background:#FFFFFF;">
                     <div class="brand-typo-inner">
                         <h2 style="font-family:'${safeHeadline}',sans-serif;color:${sc.identity};font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 16px;letter-spacing:-1px;">Tipografska povelja</h2>
                         <p style="font-family:'${safeBody}',sans-serif;color:${sc.dark};opacity:0.6;font-size:16px;margin:0 0 48px;">${safeTypoUsage}</p>
@@ -1863,11 +1875,11 @@ PRAVILA:
                     </div>
                 </section>
 
-                <!-- CTA / SIGNUP (identity bg — 30% accent zone) -->
-                <section class="brand-cta-section" style="background:${sc.identity};">
+                <!-- CTA / SIGNUP (brand light — simulates site section) -->
+                <section class="brand-cta-section" style="background:${sc.light};">
                     <div class="brand-cta-inner">
-                        <h2 style="font-family:'${safeHeadline}',sans-serif;color:${sc.light};font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 12px;">Budite deo priče</h2>
-                        <p style="font-family:'${safeBody}',sans-serif;color:${sc.light};opacity:0.8;font-size:18px;margin:0 0 36px;">Ostavite email i budite prvi koji saznaju novosti.</p>
+                        <h2 style="font-family:'${safeHeadline}',sans-serif;color:${sc.dark};font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 12px;">Budite deo priče</h2>
+                        <p style="font-family:'${safeBody}',sans-serif;color:${sc.dark};opacity:0.7;font-size:18px;margin:0 0 36px;">Ostavite email i budite prvi koji saznaju novosti.</p>
                         <div class="brand-cta-form" style="border-radius:${br};">
                             <input type="email" placeholder="vaš@email.com" readonly style="flex:1;padding:18px 24px;border:none;font-family:'${safeBody}',sans-serif;font-size:17px;color:${sc.dark};background:${sc.light};border-radius:${br} 0 0 ${br};outline:none;min-width:0;">
                             <button style="background:${sc.action};color:white;border:none;padding:18px 36px;font-family:'${safeBody}',sans-serif;font-weight:700;font-size:17px;cursor:pointer;border-radius:0 ${br} ${br} 0;white-space:nowrap;">Prijavi se</button>
@@ -1876,7 +1888,7 @@ PRAVILA:
                 </section>
 
                 <!-- BRAND VALUES -->
-                <section class="brand-values-section" style="background:${sc.light};">
+                <section class="brand-values-section" style="background:#FFFFFF;position:relative;">
                     <div class="brand-values-inner">
                         <h2 style="font-family:'${safeHeadline}',sans-serif;color:${sc.identity};font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 48px;text-align:center;letter-spacing:-1px;">Vrednosti brenda</h2>
                         <div class="brand-values-grid">${valuesHTML}</div>
@@ -1886,10 +1898,10 @@ PRAVILA:
                 </section>
 
                 <!-- LOGO BRIEF + COPY BUTTON -->
-                <section class="brand-logo-section" style="background:${sc.dark};">
+                <section class="brand-logo-section" style="background:#FFFFFF;">
                     <div class="brand-logo-inner">
-                        <h2 style="font-family:'${safeHeadline}',sans-serif;color:${sc.light};font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 16px;">Vizuelni koncept</h2>
-                        <p style="font-family:'${safeBody}',sans-serif;color:${sc.light};opacity:0.6;font-size:16px;margin:0 0 36px;">Kopirajte ovaj prompt u ChatGPT ili Gemini da generišete logo</p>
+                        <h2 style="font-family:'${safeHeadline}',sans-serif;color:${sc.dark};font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 16px;">Vizuelni koncept</h2>
+                        <p style="font-family:'${safeBody}',sans-serif;color:${sc.dark};opacity:0.6;font-size:16px;margin:0 0 36px;">Kopirajte ovaj prompt u ChatGPT ili Gemini da generišete logo</p>
                         <div style="background:${sc.dark};border:1px solid ${sc.light}20;padding:32px;border-radius:${br};font-family:'Courier New',monospace;font-size:14px;line-height:1.8;color:${sc.light};opacity:0.85;text-align:left;max-width:800px;margin:0 auto;white-space:pre-wrap;">${safeLogoPrompt}</div>
                         <button onclick="copyToClipboard(window._logoPromptText, this)" style="margin-top:20px;background:${sc.action};color:white;border:none;padding:14px 32px;border-radius:${br};font-family:'${safeBody}',sans-serif;font-weight:700;font-size:15px;cursor:pointer;box-shadow:${shadow};">&#x1F4CB; Kopiraj prompt</button>
                     </div>
@@ -1950,6 +1962,17 @@ PRAVILA:
             const valuesHTML = (sys.guidelines.dos || []).map(t => `<div style="background:white;border-radius:${br};border-left:4px solid ${sc.action};padding:28px;box-shadow:${shadow};"><p style="font-family:'${safeBody}',sans-serif;color:${sc.dark};font-size:17px;line-height:1.6;margin:0;">${sanitizeHTML(t)}</p></div>`).join('');
             const avoidHTML = (sys.guidelines.donts || []).map(t => `<div style="padding:12px 0;border-bottom:1px solid ${sc.dark}15;font-family:'${safeBody}',sans-serif;color:${sc.dark};opacity:0.6;font-size:15px;"><span style="color:${sc.support};margin-right:8px;">&#x2715;</span> ${sanitizeHTML(t)}</div>`).join('');
 
+            // Sticker annotations from lezenda_dizajna
+            const leg = sys.lezenda_dizajna || {};
+            const sLegNaslov = sanitizeHTML(leg.zasto_ovaj_naslov || '');
+            const sLegBoja = sanitizeHTML(leg.psihologija_boja || '');
+            const sLegDugme = sanitizeHTML(leg.uloga_dugmadi || '');
+            const sLegZabrana = sanitizeHTML(leg.glavna_zabrana || '');
+            const pdfSticker = (text, pos) => {
+                if (!text) return '';
+                return `<div class="sticker" style="${pos}"><span style="font-weight:700;display:block;margin-bottom:2px;">&#x1F4CC; Dizajnerska napomena</span>${text}</div>`;
+            };
+
             const standaloneHTML = `<!DOCTYPE html>
 <html lang="sr"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1968,23 +1991,22 @@ PRAVILA:
   --font-b: '${safeBody}', sans-serif;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:var(--font-b); background:var(--light); color:var(--dark); }
+body { font-family:var(--font-b); background:#FFFFFF; color:var(--dark); }
 .brand-nav { position:sticky;top:0;z-index:50;background:var(--light);border-bottom:1px solid rgba(0,0,0,0.06); }
 .brand-nav-inner { max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:16px 40px; }
-.brand-hero-section { padding:120px 40px 100px;min-height:90vh;display:flex;align-items:center; }
+.brand-hero-section { padding:120px 40px 100px;min-height:90vh;display:flex;align-items:center;position:relative; }
 .brand-hero-content { max-width:900px;margin:0 auto; }
 .brand-color-flow { display:flex;height:60px; }
 .brand-color-flow > div { display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;font-family:monospace;color:white; }
 .brand-color-flow > div > span { opacity:0.7; }
-.brand-story { padding:100px 40px;text-align:center; }
+.brand-story { padding:100px 40px;text-align:center;position:relative; }
 .brand-story-inner { max-width:800px;margin:0 auto; }
 .brand-typo-section { padding:100px 40px; }
 .brand-typo-inner { max-width:900px;margin:0 auto; }
-.brand-font-tags { display:flex;gap:12px;flex-wrap:wrap; }
 .brand-cta-section { padding:100px 40px;text-align:center; }
 .brand-cta-inner { max-width:550px;margin:0 auto; }
 .brand-cta-form { display:flex;box-shadow:0 8px 30px rgba(0,0,0,0.2);overflow:hidden; }
-.brand-values-section { padding:100px 40px; }
+.brand-values-section { padding:100px 40px;position:relative; }
 .brand-values-inner { max-width:900px;margin:0 auto; }
 .brand-values-grid { display:grid;grid-template-columns:1fr 1fr;gap:20px; }
 .brand-logo-section { padding:100px 40px;text-align:center; }
@@ -1992,6 +2014,7 @@ body { font-family:var(--font-b); background:var(--light); color:var(--dark); }
 .brand-footer { padding:60px 40px;text-align:center; }
 .brand-footer-inner { display:flex;justify-content:space-between;align-items:center;max-width:900px;margin:0 auto; }
 .brand-footer-palette { display:flex;gap:8px; }
+.sticker { position:absolute;background:var(--action);color:white;font-family:var(--font-b);font-size:12px;line-height:1.5;padding:10px 14px;border-radius:8px;max-width:260px;box-shadow:0 4px 16px rgba(0,0,0,0.15);z-index:10; }
 .print-bar { background:#10B981;color:white;padding:16px 24px;text-align:center;font-family:system-ui,sans-serif;font-size:15px; }
 @media print {
   .brand-hero-section { page-break-after:always; }
@@ -2005,9 +2028,10 @@ body { font-family:var(--font-b); background:var(--light); color:var(--dark); }
   .brand-story,.brand-typo-section,.brand-cta-section,.brand-values-section,.brand-logo-section { padding:60px 20px; }
   .brand-values-grid { grid-template-columns:1fr; }
   .brand-cta-form { flex-direction:column; }
-  .brand-cta-form input,.brand-cta-form button { border-radius:0 !important; }
+  .brand-cta-form input,.brand-cta-form span { border-radius:0 !important; }
   .brand-footer-inner { flex-direction:column;gap:20px; }
   .brand-nav-inner { padding:0 20px; }
+  .sticker { position:relative !important;top:auto !important;right:auto !important;bottom:auto !important;left:auto !important;margin:16px 20px; }
 }
 </style></head><body>
 <div class="print-bar">&#x1F4E2; Koristite <b>Ctrl+P</b> (ili <b>Cmd+P</b>) &rarr; <b>"Sačuvaj kao PDF"</b> za preuzimanje.</div>
@@ -2026,6 +2050,7 @@ body { font-family:var(--font-b); background:var(--light); color:var(--dark); }
     <p style="font-family:var(--font-b);color:var(--dark);opacity:0.7;font-size:clamp(18px,2.5vw,28px);max-width:700px;line-height:1.5;margin:0 0 48px;">${safeUniqueness}</p>
     <span style="display:inline-block;background:var(--action);color:white;padding:18px 48px;border-radius:var(--br);font-family:var(--font-b);font-weight:700;font-size:18px;box-shadow:var(--shadow);">Započni</span>
   </div>
+  ${pdfSticker(sLegNaslov, 'top:20px;right:20px')}
 </section>
 
 <div class="brand-color-flow">
@@ -2036,14 +2061,15 @@ body { font-family:var(--font-b); background:var(--light); color:var(--dark); }
   <div style="background:${sc.dark};flex:1.5;"><span>${sc.dark}</span></div>
 </div>
 
-<section class="brand-story" style="background:var(--light);">
+<section class="brand-story" style="background:#FFFFFF;">
   <div class="brand-story-inner">
     <h2 style="font-family:var(--font-h);color:var(--primary);font-size:clamp(28px,4vw,48px);font-weight:900;margin:0 0 32px;">Priča iza boja</h2>
     <p style="font-family:var(--font-b);color:var(--dark);font-size:20px;line-height:1.9;opacity:0.85;max-width:750px;">${safeReasoning}</p>
   </div>
+  ${pdfSticker(sLegBoja, 'bottom:20px;right:20px')}
 </section>
 
-<section style="background:var(--light);padding:100px 40px;">
+<section style="background:#FFFFFF;padding:100px 40px;position:relative;">
   <div style="max-width:900px;margin:0 auto;">
     <h2 style="font-family:var(--font-h);color:var(--dark);font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 16px;">Šta radimo</h2>
     <p style="font-family:var(--font-b);color:var(--dark);opacity:0.6;font-size:18px;margin:0 0 48px;">${safeUiDesc}</p>
@@ -2053,16 +2079,17 @@ body { font-family:var(--font-b); background:var(--light); color:var(--dark); }
       <div style="background:white;border-radius:var(--br);padding:32px;box-shadow:var(--shadow);border-top:4px solid var(--action);"><h3 style="font-family:var(--font-h);color:var(--dark);font-size:20px;font-weight:700;margin:0 0 8px;">Implementacija</h3><p style="font-family:var(--font-b);color:var(--dark);opacity:0.6;font-size:15px;line-height:1.6;margin:0;">Primena identiteta na sve tačke kontakta sa klijentima.</p></div>
     </div>
   </div>
+  ${pdfSticker(sLegDugme, 'top:30px;right:20px')}
 </section>
 
-<section class="brand-typo-section" style="background:${sc.support}08;">
+<section class="brand-typo-section" style="background:#FFFFFF;">
   <div class="brand-typo-inner">
     <h2 style="font-family:var(--font-h);color:var(--primary);font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 16px;">Tipografska povelja</h2>
     <p style="font-family:var(--font-b);color:var(--dark);opacity:0.6;font-size:16px;margin:0 0 48px;">${safeTypoUsage}</p>
     <div style="display:flex;flex-direction:column;gap:24px;max-width:700px;">
-      <div style="background:white;border-radius:var(--br);padding:24px 32px;box-shadow:var(--shadow);"><p style="color:var(--dark);opacity:0.4;font-size:11px;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">H1 — Naslov</p><p style="font-family:var(--font-h);color:var(--dark);font-size:clamp(32px,5vw,56px);font-weight:900;letter-spacing:-2px;margin:0;line-height:1.1;">${safeName}</p></div>
-      <div style="background:white;border-radius:var(--br);padding:24px 32px;box-shadow:var(--shadow);"><p style="color:var(--dark);opacity:0.4;font-size:11px;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">H2 — Podnaslov</p><p style="font-family:var(--font-h);color:var(--dark);font-size:clamp(22px,3vw,36px);font-weight:700;letter-spacing:-1px;margin:0;line-height:1.2;">${safeUniqueness}</p></div>
-      <div style="background:white;border-radius:var(--br);padding:24px 32px;box-shadow:var(--shadow);"><p style="color:var(--dark);opacity:0.4;font-size:11px;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">P — Telo teksta</p><p style="font-family:var(--font-b);color:var(--dark);font-size:17px;line-height:1.8;margin:0;opacity:0.8;">Dobar dizajn komunicira pre nego što se pročita. Tipografija definiše ton, ritam i karakter svakog elementa.</p></div>
+      <div style="background:${sc.light};border-radius:var(--br);padding:24px 32px;box-shadow:var(--shadow);"><p style="color:var(--dark);opacity:0.4;font-size:11px;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">H1 — Naslov</p><p style="font-family:var(--font-h);color:var(--dark);font-size:clamp(32px,5vw,56px);font-weight:900;letter-spacing:-2px;margin:0;line-height:1.1;">${safeName}</p></div>
+      <div style="background:${sc.light};border-radius:var(--br);padding:24px 32px;box-shadow:var(--shadow);"><p style="color:var(--dark);opacity:0.4;font-size:11px;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">H2 — Podnaslov</p><p style="font-family:var(--font-h);color:var(--dark);font-size:clamp(22px,3vw,36px);font-weight:700;letter-spacing:-1px;margin:0;line-height:1.2;">${safeUniqueness}</p></div>
+      <div style="background:${sc.light};border-radius:var(--br);padding:24px 32px;box-shadow:var(--shadow);"><p style="color:var(--dark);opacity:0.4;font-size:11px;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px;">P — Telo teksta</p><p style="font-family:var(--font-b);color:var(--dark);font-size:17px;line-height:1.8;margin:0;opacity:0.8;">Dobar dizajn komunicira pre nego što se pročita. Tipografija definiše ton, ritam i karakter svakog elementa.</p></div>
     </div>
     <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:32px;">
       <span style="background:${sc.identity}15;color:var(--primary);padding:8px 20px;border-radius:100px;font-family:var(--font-h);font-weight:700;font-size:14px;">${safeHeadline}</span>
@@ -2071,29 +2098,30 @@ body { font-family:var(--font-b); background:var(--light); color:var(--dark); }
   </div>
 </section>
 
-<section class="brand-cta-section" style="background:var(--primary);">
+<section class="brand-cta-section" style="background:var(--light);">
   <div class="brand-cta-inner">
-    <h2 style="font-family:var(--font-h);color:var(--light);font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 12px;">Budite deo priče</h2>
-    <p style="font-family:var(--font-b);color:var(--light);opacity:0.8;font-size:18px;margin:0 0 36px;">Ostavite email i budite prvi koji saznaju novosti.</p>
+    <h2 style="font-family:var(--font-h);color:var(--dark);font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 12px;">Budite deo priče</h2>
+    <p style="font-family:var(--font-b);color:var(--dark);opacity:0.7;font-size:18px;margin:0 0 36px;">Ostavite email i budite prvi koji saznaju novosti.</p>
     <div class="brand-cta-form" style="border-radius:var(--br);">
-      <input type="email" placeholder="vaš@email.com" readonly style="flex:1;padding:18px 24px;border:none;font-family:var(--font-b);font-size:17px;color:var(--dark);background:var(--light);border-radius:var(--br) 0 0 var(--br);outline:none;min-width:0;">
+      <input type="email" placeholder="vaš@email.com" readonly style="flex:1;padding:18px 24px;border:none;font-family:var(--font-b);font-size:17px;color:var(--dark);background:white;border-radius:var(--br) 0 0 var(--br);outline:none;min-width:0;">
       <span style="display:inline-flex;align-items:center;background:var(--action);color:white;padding:18px 36px;font-family:var(--font-b);font-weight:700;font-size:17px;white-space:nowrap;">Prijavi se</span>
     </div>
   </div>
 </section>
 
-<section class="brand-values-section" style="background:var(--light);">
+<section class="brand-values-section" style="background:#FFFFFF;">
   <div class="brand-values-inner">
     <h2 style="font-family:var(--font-h);color:var(--primary);font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 48px;text-align:center;">Vrednosti brenda</h2>
     <div class="brand-values-grid">${valuesHTML}</div>
     ${avoidHTML ? `<div style="max-width:600px;margin:60px auto 0;"><p style="font-weight:700;color:var(--dark);opacity:0.4;font-size:13px;text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;">Izbegavamo</p>${avoidHTML}</div>` : ''}
   </div>
+  ${pdfSticker(sLegZabrana, 'bottom:20px;left:20px')}
 </section>
 
-<section class="brand-logo-section" style="background:var(--dark);">
+<section class="brand-logo-section" style="background:#FFFFFF;">
   <div class="brand-logo-inner">
-    <h2 style="font-family:var(--font-h);color:var(--light);font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 16px;">Vizuelni koncept</h2>
-    <p style="font-family:var(--font-b);color:var(--light);opacity:0.6;font-size:16px;margin:0 0 36px;">Kopirajte ovaj prompt u ChatGPT ili Gemini da generišete logo</p>
+    <h2 style="font-family:var(--font-h);color:var(--dark);font-size:clamp(28px,4vw,44px);font-weight:900;margin:0 0 16px;">Vizuelni koncept</h2>
+    <p style="font-family:var(--font-b);color:var(--dark);opacity:0.6;font-size:16px;margin:0 0 36px;">Kopirajte ovaj prompt u ChatGPT ili Gemini da generišete logo</p>
     <div style="background:var(--dark);border:1px solid ${sc.light}20;padding:32px;border-radius:var(--br);font-family:'Courier New',monospace;font-size:14px;line-height:1.8;color:var(--light);opacity:0.85;text-align:left;max-width:800px;margin:0 auto;white-space:pre-wrap;">${safeLogoPrompt}</div>
   </div>
 </section>
